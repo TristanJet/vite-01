@@ -9,6 +9,18 @@
   font-size: 3.2rem;
 }
 
+.untyped {
+  color: white;
+}
+
+.correct {
+  color: rgb(0, 255, 0);
+}
+
+.incorrect {
+  color: rgb(255, 0, 0)
+}
+
 .card {
   padding: 2em;
 }
