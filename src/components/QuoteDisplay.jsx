@@ -4,21 +4,19 @@ export function QuoteDisplay() {
   const quote = "Theory can only take you so far.".split("");
 
   const [inputState, setInputState] = useState([]);
-  const [correctState, setCorrectState] = useState([]);
 
   useEffect(() => {
     const charRegex = /[a-z0-9]/i;
-
     const specialKeys = [" ", ".", ",", "?"];
 
     const handleKeyDown = (event) => {
       if (event.key === "Backspace") {
-        setInputState((prevInputState) => prevInputState.slice(0, -1));
+        setInputState(prevInputState => prevInputState.slice(0, -1));
       } else if (
         (event.key.length === 1 && charRegex.test(event.key)) ||
         specialKeys.includes(event.key)
       ) {
-        setInputState((prevInputState) => [...prevInputState, event.key]);
+        setInputState(prevInputState => [...prevInputState, event.key]);
       }
     };
 
@@ -29,26 +27,20 @@ export function QuoteDisplay() {
     };
   }, []);
 
-  useEffect(() => {
-    
-    inputState.forEach((inputChar, index) => {
-      if (inputChar === quote[index]) {
-        setCorrectState((prevCorrectState) => [...prevCorrectState, "correct"]);
-      } else {
-        setCorrectState((prevCorrectState) => [
-          ...prevCorrectState,
-          "incorrect",
-        ]);
-      }
-    });
-  }, [inputState]);
+  const correctState = inputState.map((inputChar, index) => {
+    if (inputChar === quote[index]) {
+      return "correct";
+    } else {
+      return "incorrect";
+    }
+  });
 
   return (
     <div className="quote-display" id="quoteDisplay">
       {quote.map((character, index) => (
         <span
           key={index}
-          class={correctState[index] ? correctState[index] : "untyped"}
+          className={index < correctState.length ? correctState[index] : "untyped"}
         >
           {character}
         </span>
@@ -56,3 +48,4 @@ export function QuoteDisplay() {
     </div>
   );
 }
+
