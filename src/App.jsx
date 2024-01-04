@@ -7,12 +7,17 @@ import "./App.css";
 
 function App() {
 
+  const authClick = async () => {
+    const resp = await fetch('http://localhost:5000/auth')
+    console.log(resp)
+  }
+
   return (
     <>
       <GoogleOAuthProvider clientId="">
         <QuoteDisplay />
-        <h1>Tristan is very cool</h1>
         <GoogleLoginButton />
+        <button onClick={authClick} >Auth</button>
       </GoogleOAuthProvider>
     </>
   );
