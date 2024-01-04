@@ -8,9 +8,7 @@ import "./App.css";
 function App() {
 
   const authClick = async () => {
-    const resp = await fetch('http://localhost:5000/api/v1/auth', {
-      method: 'GET'
-    })
+    const resp = await fetch('http://localhost:5000/api/v1/auth')
     const json = await resp.json()
     console.log(json)
   }
