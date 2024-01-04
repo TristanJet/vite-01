@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 
+const quote = "Theory can only take you so far.".split("");
+
 export function QuoteDisplay() {
-  const quote = "Theory can only take you so far.".split("");
 
   const [inputState, setInputState] = useState([]);
 
