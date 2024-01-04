@@ -11,7 +11,8 @@ function App() {
     const resp = await fetch('http://localhost:5000/api/v1/auth', {
       method: 'GET'
     })
-    console.log(resp.body)
+    const json = await resp.json()
+    console.log(json)
   }
 
   return (
