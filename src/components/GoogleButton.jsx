@@ -2,10 +2,23 @@ import React from 'react';
 import { GoogleLogin } from '@react-oauth/google';
 
 export function GoogleLoginButton () {
-  const handleLoginSuccess = (credentialResponse) => {
-    console.log(credentialResponse);
-    // Additional logic on success
-  };
+  const handleLoginSuccess = async (credentialResponse) => {
+    const url = 'http://localhost:5000/api/v1/signin'
+
+    const response = await fetch(url, {
+      method: "POST", 
+      mode: "cors",
+      cache: "no-cache", 
+      credentials: "same-origin", 
+      headers: {
+        "Content-Type": "application/json",
+      },
+      redirect: "follow", 
+      referrerPolicy: "no-referrer", 
+      body: JSON.stringify(credentialResponse), 
+    });
+    return response.json(); 
+  }
 
   const handleLoginError = () => {
     console.log("Login Failed");
