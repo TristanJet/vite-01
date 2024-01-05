@@ -3,7 +3,7 @@ import { GoogleLogin } from '@react-oauth/google';
 
 export function GoogleLoginButton () {
   const handleLoginSuccess = async (credentialResponse) => {
-    const url = 'http://localhost:5000/api/v1/signin'
+    const url = 'https://localhost:5000/api/v1/signin'
 
     const response = await fetch(url, {
       method: "POST", 
