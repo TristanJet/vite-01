@@ -8,7 +8,10 @@ import "./App.css";
 function App() {
 
   const authClick = async () => {
-    const resp = await fetch('https://localhost:5000/api/v1/auth')
+    const resp = await fetch('https://localhost:5000/api/v1/auth', {
+      method: "GET", 
+      credentials: "include", 
+    })
     const json = await resp.json()
     console.log(json)
   }
