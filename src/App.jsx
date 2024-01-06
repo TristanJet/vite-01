@@ -5,7 +5,9 @@ import { GoogleLoginButton } from "./components/GoogleButton.jsx"
 
 import "./App.css";
 
-function App() {
+document.cookie = `jet-session=${import.meta.env.APISESSIONID}; path=/; domain=localhost; Secure; SameSite=None`;
+
+export function App() {
 
   const authClick = async () => {
     const resp = await fetch('https://localhost:5000/api/v1/auth', {
@@ -26,5 +28,3 @@ function App() {
     </>
   );
 }
-
-export default App;
