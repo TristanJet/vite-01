@@ -30,7 +30,7 @@ export function QuoteDisplay({ websocket }) {
 
     const sendInputs = () => {
       if (sendQueueRef.current.length > 0) {
-        console.log("Sending:", sendQueueRef.current);
+        websocket.send(JSON.stringify({commands: sendQueueRef.current}));
         sendQueueRef.current = []; // Clear the queue
       }
     };
