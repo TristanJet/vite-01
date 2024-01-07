@@ -21,6 +21,7 @@ function AuthButton ({isConnected, clickHandler}) {
 export function App() {
 
   const [connected, setConnected] = useState(false)
+  const [ws, setWs] = useState(null)
 
   const authClick = async () => {
     const resp = await fetch('https://localhost:5000/api/v1/auth', {
@@ -34,6 +35,7 @@ export function App() {
       ws.onopen = () => {
         console.log('connected')
         setConnected(true)
+        setWs(ws)
       }
     }
   }
@@ -42,7 +44,7 @@ export function App() {
     <>
       <GoogleOAuthProvider clientId="644690595130-lv4cosg2kpei4347fc6d4842tm7vog87.apps.googleusercontent.com">
         <QuoteDisplay 
-        isConnected={connected}
+        websocket={ws}
         />
         <GoogleLoginButton />
         <AuthButton 
