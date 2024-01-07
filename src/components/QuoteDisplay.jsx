@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 
 const quote = "Theory can only take you so far.".split("");
 
-export function QuoteDisplay() {
-
+export function QuoteDisplay({ isConnected }) {
   const [inputState, setInputState] = useState([]);
 
   useEffect(() => {
@@ -12,21 +11,23 @@ export function QuoteDisplay() {
 
     const handleKeyDown = (event) => {
       if (event.key === "Backspace") {
-        setInputState(prevInputState => prevInputState.slice(0, -1));
+        setInputState((prevInputState) => prevInputState.slice(0, -1));
       } else if (
         (event.key.length === 1 && charRegex.test(event.key)) ||
         specialKeys.includes(event.key)
       ) {
-        setInputState(prevInputState => [...prevInputState, event.key]);
+        setInputState((prevInputState) => [...prevInputState, event.key]);
       }
     };
 
-    window.addEventListener("keydown", handleKeyDown);
+    if (isConnected) {
+      window.addEventListener("keydown", handleKeyDown);
+    }
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
+  }, [isConnected]);
 
   const correctState = inputState.map((inputChar, index) => {
     if (inputChar === quote[index]) {
@@ -41,7 +42,9 @@ export function QuoteDisplay() {
       {quote.map((character, index) => (
         <span
           key={index}
-          className={index < correctState.length ? correctState[index] : "untyped"}
+          className={
+            index < correctState.length ? correctState[index] : "untyped"
+          }
         >
           {character}
         </span>
@@ -49,4 +52,3 @@ export function QuoteDisplay() {
     </div>
   );
 }
-

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
 import { QuoteDisplay } from "./components/QuoteDisplay.jsx";
@@ -5,9 +6,21 @@ import { GoogleLoginButton } from "./components/GoogleButton.jsx"
 
 import "./App.css";
 
-document.cookie = `jet-session=${import.meta.env.APISESSIONID}; path=/; domain=localhost; Secure; SameSite=None`;
+const sessionId = import.meta.env.VITE_SESH
+
+function AuthButton ({isConnected, clickHandler}) {
+
+  if (isConnected) {
+    return null
+  } else {
+    return (<button onClick={clickHandler} >Auth</button>)
+  }
+  
+}
 
 export function App() {
+
+  const [connected, setConnected] = useState(false)
 
   const authClick = async () => {
     const resp = await fetch('https://localhost:5000/api/v1/auth', {
@@ -15,15 +28,27 @@ export function App() {
       credentials: "include", 
     })
     const json = await resp.json()
-    console.log(json)
+    console.log(json.message)
+    if (json.message === 'Authorized') {
+      const ws = new WebSocket('wss://localhost:5000/ws')
+      ws.onopen = () => {
+        console.log('connected')
+        setConnected(true)
+      }
+    }
   }
 
   return (
     <>
       <GoogleOAuthProvider clientId="644690595130-lv4cosg2kpei4347fc6d4842tm7vog87.apps.googleusercontent.com">
-        <QuoteDisplay />
+        <QuoteDisplay 
+        isConnected={connected}
+        />
         <GoogleLoginButton />
-        <button onClick={authClick} >Auth</button>
+        <AuthButton 
+        isConnected={connected} 
+        clickHandler={authClick} 
+        />
       </GoogleOAuthProvider>
     </>
   );
