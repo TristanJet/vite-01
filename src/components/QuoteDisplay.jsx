@@ -4,6 +4,7 @@ const quote = "Theory can only take you so far.".split("");
 
 export function QuoteDisplay({ websocket }) {
   const [inputState, setInputState] = useState([]);
+  const inputLength = useRef(0)
   const sendQueueRef = useRef([]);
   const delNum = useRef(1)
 
@@ -14,7 +15,11 @@ export function QuoteDisplay({ websocket }) {
 
     const handleKeyDown = (event) => {
       if (event.key === "Backspace") {
+        if (inputLength.current === 0) {
+          return
+        }
         setInputState((prevInputState) => prevInputState.slice(0, -1));
+        inputLength.current -= 1
         if (delNum.current > 1) {
           try {
             sendQueueRef.current[sendQueueRef.current.length - 1].num = delNum.current
@@ -32,6 +37,7 @@ export function QuoteDisplay({ websocket }) {
         specialKeys.includes(event.key)
       ) {
         setInputState((prevInputState) => [...prevInputState, event.key]);
+        inputLength.current += 1
         sendQueueRef.current.push({ cmd: "ADD", val: event.key });
         delNum.current = 1
       }
