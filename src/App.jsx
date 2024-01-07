@@ -20,7 +20,6 @@ function AuthButton ({isConnected, clickHandler}) {
 
 export function App() {
 
-  const [connected, setConnected] = useState(false)
   const [ws, setWs] = useState(null)
 
   const authClick = async () => {
@@ -34,7 +33,6 @@ export function App() {
       const ws = new WebSocket('wss://localhost:5000/ws')
       ws.onopen = () => {
         console.log('connected')
-        setConnected(true)
         setWs(ws)
       }
     }
@@ -48,7 +46,7 @@ export function App() {
         />
         <GoogleLoginButton />
         <AuthButton 
-        isConnected={connected} 
+        isConnected={ws ? true : false} 
         clickHandler={authClick} 
         />
       </GoogleOAuthProvider>
