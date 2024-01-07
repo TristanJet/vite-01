@@ -5,6 +5,7 @@ const quote = "Theory can only take you so far.".split("");
 export function QuoteDisplay({ websocket }) {
   const [inputState, setInputState] = useState([]);
   const sendQueueRef = useRef([]);
+  const delNum = useRef(1)
 
   useEffect(() => {
     /* Upon websocket connection, adds listener to keydown, which increase input state and adds to send queue.*/ 
@@ -14,13 +15,25 @@ export function QuoteDisplay({ websocket }) {
     const handleKeyDown = (event) => {
       if (event.key === "Backspace") {
         setInputState((prevInputState) => prevInputState.slice(0, -1));
-        sendQueueRef.current.push({ cmd: "DEL", num: 1 });
+        if (delNum.current > 1) {
+          try {
+            sendQueueRef.current[sendQueueRef.current.length - 1].num = delNum.current
+            delNum.current += 1
+          } catch {
+            delNum.current = 1
+            sendQueueRef.current.push({ cmd: "DEL", num: delNum.current });
+          }
+        } else {
+          sendQueueRef.current.push({ cmd: "DEL", num: delNum.current });
+          delNum.current += 1
+        }
       } else if (
         (event.key.length === 1 && charRegex.test(event.key)) ||
         specialKeys.includes(event.key)
       ) {
         setInputState((prevInputState) => [...prevInputState, event.key]);
         sendQueueRef.current.push({ cmd: "ADD", val: event.key });
+        delNum.current = 1
       }
     };
 
@@ -30,6 +43,7 @@ export function QuoteDisplay({ websocket }) {
 
     const sendInputs = () => {
       if (sendQueueRef.current.length > 0) {
+        console.log(sendQueueRef.current)
         websocket.send(JSON.stringify({commands: sendQueueRef.current}));
         sendQueueRef.current = []; // Clear the queue
       }
