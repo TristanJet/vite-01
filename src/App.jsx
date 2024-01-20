@@ -3,6 +3,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 
 import { QuoteDisplay } from "./components/QuoteDisplay.jsx";
 import { GoogleLoginButton } from "./components/GoogleButton.jsx"
+import { LeaderBoard } from "./components/LeaderBoard.jsx";
 
 import "./App.css";
 
@@ -49,6 +50,7 @@ export function App() {
         isConnected={ws ? true : false} 
         clickHandler={authClick} 
         />
+        <LeaderBoard />
       </GoogleOAuthProvider>
     </>
   );
