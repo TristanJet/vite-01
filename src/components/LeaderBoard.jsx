@@ -10,7 +10,7 @@ export function LeaderBoard() {
       try {
         const response = await fetch(`${httpUrl}/api/v1/leaderboard`, {
           method: "GET", 
-          //credentials: "include", 
+          credentials: "include", 
         });
         if (response.ok) {
           const jsonData = (await response.json()).content;

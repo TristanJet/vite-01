@@ -28,7 +28,7 @@ export function App() {
   const authClick = async () => {
     const resp = await fetch(`${httpUrl}/api/v1/auth`, {
       method: "GET", 
-      //credentials: "include", 
+      credentials: "include", 
     })
     const json = await resp.json()
     console.log(json.message)

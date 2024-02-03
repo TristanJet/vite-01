@@ -11,7 +11,7 @@ export function GoogleLoginButton () {
       method: "POST", 
       mode: "cors",
       cache: "no-cache", 
-      //credentials: "include", 
+      credentials: "include", 
       headers: {
         "Content-Type": "application/json",
       },
