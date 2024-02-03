@@ -1,15 +1,17 @@
 import React from 'react';
 import { GoogleLogin } from '@react-oauth/google';
 
+const httpUrl = import.meta.env.VITE_HTTP_SERVER_URL
+
 export function GoogleLoginButton () {
   const handleLoginSuccess = async (credentialResponse) => {
-    const url = 'https://localhost:5000/api/v1/signin'
+    const url = `${httpUrl}/api/v1/signin`
 
     const response = await fetch(url, {
       method: "POST", 
       mode: "cors",
       cache: "no-cache", 
-      credentials: "include", 
+      //credentials: "include", 
       headers: {
         "Content-Type": "application/json",
       },

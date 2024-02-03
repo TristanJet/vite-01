@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react';
 
+const httpUrl = import.meta.env.VITE_HTTP_SERVER_URL
+
 export function LeaderBoard() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch('https://localhost:5000/api/v1/leaderboard', {
+        const response = await fetch(`${httpUrl}/api/v1/leaderboard`, {
           method: "GET", 
-          credentials: "include", 
+          //credentials: "include", 
         });
         if (response.ok) {
           const jsonData = (await response.json()).content;

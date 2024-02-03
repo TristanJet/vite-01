@@ -7,7 +7,9 @@ import { LeaderBoard } from "./components/LeaderBoard.jsx";
 
 import "./App.css";
 
-const sessionId = import.meta.env.VITE_SESH
+const httpUrl = import.meta.env.VITE_HTTP_SERVER_URL
+const wsUrl = import.meta.env.VITE_WS_SERVER_URL
+const googleClient = import.meta.env.VITE_GOOGLE_CLIENT_ID
 
 function AuthButton ({isConnected, clickHandler}) {
 
@@ -24,14 +26,14 @@ export function App() {
   const [ws, setWs] = useState(null)
 
   const authClick = async () => {
-    const resp = await fetch('https://localhost:5000/api/v1/auth', {
+    const resp = await fetch(`${httpUrl}/api/v1/auth`, {
       method: "GET", 
-      credentials: "include", 
+      //credentials: "include", 
     })
     const json = await resp.json()
     console.log(json.message)
     if (json.message === 'Authorized') {
-      const ws = new WebSocket('wss://localhost:5000/ws')
+      const ws = new WebSocket(`${wsUrl}/ws/`) //fuck you fuck you fuck you
       ws.onopen = () => {
         console.log('connected')
         setWs(ws)
@@ -41,7 +43,7 @@ export function App() {
 
   return (
     <>
-      <GoogleOAuthProvider clientId="644690595130-lv4cosg2kpei4347fc6d4842tm7vog87.apps.googleusercontent.com">
+      <GoogleOAuthProvider clientId={googleClient}>
         <QuoteDisplay 
         websocket={ws}
         />
