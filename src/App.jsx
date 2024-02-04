@@ -8,8 +8,11 @@ import { LeaderBoard } from "./components/LeaderBoard.jsx";
 import "./App.css";
 
 const httpUrl = import.meta.env.VITE_HTTP_SERVER_URL
+console.log(`${httpUrl}`)
 const wsUrl = import.meta.env.VITE_WS_SERVER_URL
+console.log(`${wsUrl}`)
 const googleClient = import.meta.env.VITE_GOOGLE_CLIENT_ID
+console.log(`${googleClient}`)
 
 function AuthButton ({isConnected, clickHandler}) {
 
