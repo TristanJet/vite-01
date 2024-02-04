@@ -29,6 +29,20 @@ thead {
   font-size: 3.2rem;
 }
 
+@keyframes blink {
+  from, to { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.typing-cursor {
+  height: 1em; /* Match the line-height of your text */
+  width: 2px; /* Thin vertical line */
+  background-color: black; /* Cursor color */
+  display: inline-block; /* Align with inline text */
+  margin-left: 2px; /* Optional: Adjust spacing from the last character */
+  animation: blink 1s infinite;
+}
+
 .untyped {
   color: white;
 }
