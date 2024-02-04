@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
-const httpUrl = import.meta.env.VITE_HTTP_SERVER_URL
+const httpUrl = import.meta.env.VITE_HTTP_SERVER_URL;
 
 export function LeaderBoard() {
   const [data, setData] = useState([]);
@@ -9,17 +9,17 @@ export function LeaderBoard() {
     async function fetchData() {
       try {
         const response = await fetch(`${httpUrl}/api/v1/leaderboard`, {
-          method: "GET", 
-          credentials: "include", 
+          method: "GET",
+          credentials: "include",
         });
         if (response.ok) {
           const jsonData = (await response.json()).content;
           setData(jsonData);
         } else {
-          console.error('Failed to fetch');
+          console.error("Failed to fetch");
         }
       } catch (error) {
-        console.error('Error:', error);
+        console.error("Error:", error);
       }
     }
 
@@ -46,4 +46,4 @@ export function LeaderBoard() {
       </table>
     </div>
   );
-};
+}

@@ -1,27 +1,27 @@
-import React from 'react';
-import { GoogleLogin } from '@react-oauth/google';
+import React from "react";
+import { GoogleLogin } from "@react-oauth/google";
 
-const httpUrl = import.meta.env.VITE_HTTP_SERVER_URL
+const httpUrl = import.meta.env.VITE_HTTP_SERVER_URL;
 
-export function GoogleLoginButton () {
+export function GoogleLoginButton() {
   const handleLoginSuccess = async (credentialResponse) => {
-    const url = `${httpUrl}/api/v1/signin`
+    const url = `${httpUrl}/api/v1/signin`;
 
     const response = await fetch(url, {
-      method: "POST", 
+      method: "POST",
       mode: "cors",
-      cache: "no-cache", 
-      credentials: "include", 
+      cache: "no-cache",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
-      redirect: "follow", 
-      referrerPolicy: "no-referrer", 
-      body: JSON.stringify(credentialResponse), 
+      redirect: "follow",
+      referrerPolicy: "no-referrer",
+      body: JSON.stringify(credentialResponse),
     });
-    const json = await response.json()
-    console.log(json)
-  }
+    const json = await response.json();
+    console.log(json);
+  };
 
   const handleLoginError = () => {
     console.log("Login Failed");
@@ -29,9 +29,6 @@ export function GoogleLoginButton () {
   };
 
   return (
-    <GoogleLogin
-      onSuccess={handleLoginSuccess}
-      onError={handleLoginError}
-    />
+    <GoogleLogin onSuccess={handleLoginSuccess} onError={handleLoginError} />
   );
-};
+}
