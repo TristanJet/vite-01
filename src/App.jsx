@@ -33,7 +33,7 @@ export function App() {
     const json = await resp.json()
     console.log(json.message)
     if (json.message === 'Authorized') {
-      const ws = new WebSocket(`${wsUrl}/ws/`) //fuck you fuck you fuck you
+      const ws = new WebSocket(`${wsUrl}/ws`)
       ws.onopen = () => {
         console.log('connected')
         setWs(ws)
