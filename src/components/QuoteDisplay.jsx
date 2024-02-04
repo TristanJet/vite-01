@@ -2,11 +2,19 @@ import { useEffect, useState, useRef } from "react";
 
 const quote = "Theory can only take you so far.".split("");
 
-export function QuoteDisplay({ websocket }) {
+export function QuoteDisplay({ websocket, gameState, setGameState }) {
   const [inputState, setInputState] = useState([]);
   const inputLength = useRef(0);
   const sendQueueRef = useRef([]);
   const delNum = useRef(1);
+
+  useEffect(() => {
+    if (gameState === 1) {
+      setInputState([])
+      inputLength.current = 0
+    }
+    setGameState(0)
+  }, [gameState])
 
   useEffect(() => {
     /* Upon websocket connection, adds listener to keydown, which increase input state and adds to send queue.*/
