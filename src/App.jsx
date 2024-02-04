@@ -24,17 +24,24 @@ export function App() {
   const [gameState, setGameState] = useState(0);
 
   const authClick = async () => {
-    const token = 12345
-    const ws = new WebSocket(`${wsUrl}/ws?jet-token=${token}`);
-    ws.onopen = () => {
-      console.log("connected");
-      setWs(ws);
-    };
-    ws.onmessage = (event) => {
-      const data = JSON.parse(event.data)
-      if (data.type === 'FIN') {
-        setGameState(1)
-        console.log(`${data.name}: you typed the quote in ${data.finishTime} seconds!`)
+    const resp = await fetch(`${httpUrl}/api/v1/auth`, {
+      method: "GET",
+      credentials: "include",
+    });
+    const json = await resp.json();
+    console.log(json.message);
+    if (json.message === "Authorized") {
+      const ws = new WebSocket(`${wsUrl}/ws?jet-token=${json.token}`);
+      ws.onopen = () => {
+        console.log("connected");
+        setWs(ws);
+      };
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data)
+        if (data.type === 'FIN') {
+          setGameState(1)
+          console.log(`${data.name}: you typed the quote in ${data.finishTime} seconds!`)
+        }
       }
     }
   };
