@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 
 const quote = "Theory can only take you so far.".split("");
 
-export function QuoteDisplay({ websocket, gameState, setGameState }) {
+export function QuoteDisplay({ websocket, gameState, clearGameState }) {
   const [inputState, setInputState] = useState([]);
   const inputLength = useRef(0);
   const sendQueueRef = useRef([]);
@@ -13,7 +13,7 @@ export function QuoteDisplay({ websocket, gameState, setGameState }) {
       setInputState([])
       inputLength.current = 0
     }
-    setGameState(0)
+    clearGameState()
   }, [gameState])
 
   useEffect(() => {

@@ -2,29 +2,35 @@ import { useState, useEffect } from "react";
 
 const httpUrl = import.meta.env.VITE_HTTP_SERVER_URL;
 
-export function LeaderBoard() {
+export function LeaderBoard({ gameState }) {
   const [data, setData] = useState([]);
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await fetch(`${httpUrl}/api/v1/leaderboard`, {
-          method: "GET",
-          credentials: "include",
-        });
-        if (response.ok) {
-          const jsonData = (await response.json()).content;
-          setData(jsonData);
-        } else {
-          console.error("Failed to fetch");
-        }
-      } catch (error) {
-        console.error("Error:", error);
+  async function fetchData() {
+    try {
+      const response = await fetch(`${httpUrl}/api/v1/leaderboard`, {
+        method: "GET",
+        credentials: "include",
+      });
+      if (response.ok) {
+        const jsonData = (await response.json()).content;
+        setData(jsonData);
+      } else {
+        console.error("Failed to fetch");
       }
+    } catch (error) {
+      console.error("Error:", error);
     }
+  }
 
+  useEffect(() => {
     fetchData();
-  }, []); // The empty array ensures this effect runs only once, similar to componentDidMount
+  }, []);
+
+  useEffect(() => {
+    if (gameState) {
+      fetchData();
+    }
+  }, [gameState]); // The empty array ensures this effect runs only once, similar to componentDidMount
 
   return (
     <div className="leaderboard-container">

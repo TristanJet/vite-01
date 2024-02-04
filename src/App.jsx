@@ -42,10 +42,10 @@ export function App() {
   return (
     <>
       <GoogleOAuthProvider clientId={googleClient}>
-        <QuoteDisplay websocket={ws} gameState={gameState} setGameState={setGameState} />
+        <QuoteDisplay websocket={ws} gameState={gameState} clearGameState={() => {setGameState(0)}} />
         <GoogleLoginButton />
         <AuthButton isConnected={ws ? true : false} clickHandler={authClick} />
-        <LeaderBoard />
+        <LeaderBoard gameState={gameState} />
       </GoogleOAuthProvider>
     </>
   );
