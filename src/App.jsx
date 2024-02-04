@@ -23,19 +23,12 @@ export function App() {
   const [ws, setWs] = useState(null);
 
   const authClick = async () => {
-    const resp = await fetch(`${httpUrl}/api/v1/auth`, {
-      method: "GET",
-      credentials: "include",
-    });
-    const json = await resp.json();
-    console.log(json.message);
-    if (json.message === "Authorized") {
-      const ws = new WebSocket(`${wsUrl}/ws?jet-token=${json.token}`);
-      ws.onopen = () => {
-        console.log("connected");
-        setWs(ws);
-      };
-    }
+    const token = 12345
+    const ws = new WebSocket(`${wsUrl}/ws?jet-token=${token}`);
+    ws.onopen = () => {
+      console.log("connected");
+      setWs(ws);
+    };
   };
 
   return (
