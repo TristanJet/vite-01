@@ -10,6 +10,7 @@ import "./App.css";
 const httpUrl = import.meta.env.VITE_HTTP_SERVER_URL;
 const wsUrl = import.meta.env.VITE_WS_SERVER_URL;
 const googleClient = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+const isDev = import.meta.env.DEV
 
 function AuthButton({ isConnected, clickHandler }) {
   if (isConnected) {
@@ -19,16 +20,27 @@ function AuthButton({ isConnected, clickHandler }) {
   }
 }
 
+async function auth() {
+  if (isDev) {
+    const resp = {
+      message: "Authorized",
+      token: 12345,
+    }
+    return resp
+  }
+  const resp = await fetch(`${httpUrl}/api/v1/auth`, {
+    method: "GET",
+    credentials: "include",
+  });
+  return await resp.json();
+}
+
 export function App() {
   const [ws, setWs] = useState(null);
   const [gameState, setGameState] = useState(0);
 
   const authClick = async () => {
-    const resp = await fetch(`${httpUrl}/api/v1/auth`, {
-      method: "GET",
-      credentials: "include",
-    });
-    const json = await resp.json();
+    const json = await auth()
     console.log(json.message);
     if (json.message === "Authorized") {
       const ws = new WebSocket(`${wsUrl}/ws?jet-token=${json.token}`);
