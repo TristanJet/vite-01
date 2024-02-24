@@ -8,4 +8,7 @@ export default defineConfig({
     port: 5174
   },
   plugins: [react()],
+  build: {
+    outDir: '../../data/www/jettype-front-build'
+  },
 })
