@@ -20,50 +20,56 @@ export function App() {
 
     const auth = async () => {
       if (isDev) {
-        const resp = {
+        return {
           message: "Authorized",
           token: 12345,
-        }
-        return resp
+        };
       }
-      const resp = await fetch(`${httpUrl}/api/v1/auth`, {
+      const response = await fetch(`${httpUrl}/api/v1/auth`, {
         method: "GET",
         credentials: "include",
       });
-      return await resp.json();
-    } 
-
-    auth().then((authMsg) => {
-      if (authMsg.message === 'Authorized') {
-        const ws = new WebSocket(`${wsUrl}/ws?jet-token=${authMsg.token}`);
-        ws.onopen = () => {
-          console.log("connected");
-          setWs(ws);
-        };
-        ws.onmessage = (event) => {
-          if (event.data === 'PING') {
-            console.log('pinged')
-            ws.send('PONG')
-            return
-          }
-          const parsed = JSON.parse(event.data)
-          if (parsed.type === 'FIN') {
-            setGameState(1)
-            console.log(`${parsed.name}: you typed the quote in ${parsed.finishTime} seconds!`)
-          }
+      const respJson = await response.json();
+      return respJson;
+    };
+    
+    const setupWebSocketConnection = async () => {
+      try {
+        const authMsg = await auth();
+        if (authMsg.message === 'Authorized') {
+          const ws = new WebSocket(`${wsUrl}/ws?jet-token=${authMsg.token}`);
+          ws.onopen = () => {
+            console.log("connected");
+            setWs(ws);
+          };
+          ws.onmessage = (event) => {
+            if (event.data === 'PING') {
+              console.log('pinged');
+              ws.send('PONG');
+              return;
+            }
+            const parsed = JSON.parse(event.data);
+            if (parsed.type === 'FIN') {
+              setGameState(1);
+              console.log(`${parsed.name}: you typed the quote in ${parsed.finishTime} seconds!`);
+            }
+          };
+          ws.onclose = () => {
+            console.log('Websocket closed');
+          };
+          ws.onerror = () => {
+            console.log('Websocket error');
+          };
+        } else {
+          console.log('Please sign in.');
         }
-        ws.onclose = () => {
-          console.log('Websocket closed')
-        }
-        ws.onerror = () => {
-          console.log('Websocket error')
-        }
-      } else {
-        console.log('Please sign in.')
+      } catch (error) {
+        console.log('Server connection error', error);
       }
-    }).catch(() => {
-      console.log('Server connection error')
-    })
+    };
+    
+    setupWebSocketConnection();
+    
   }, [])
 
 
