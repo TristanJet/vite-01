@@ -5,6 +5,40 @@
   text-align: center;
 }
 
+.main-container {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr; /* Creates three columns */
+  align-items: center; /* Center items vertically */
+  height: 70vh; /* Full viewport height */
+}
+
+.quote-display {
+  grid-column: 2 / 3;
+  margin: 5rem; /* Places the quote display in the center column */
+  justify-self: center; /* Ensures the quote display is centered within its column */
+}
+
+.right-column {
+  grid-column: 3 / 4; /* Places the right column in the third column */
+  height: 100%; /* Optional: Adjust based on your layout needs */
+  display: flex;
+  flex-direction: column; /* Keeps items stacked vertically */
+}
+
+@media (max-width: 768px) {
+  .main-container {
+    grid-template-columns: 1fr; /* Uses one column layout for smaller screens */
+  }
+
+  .quote-display, .right-column {
+    grid-column: 1; /* Places both elements in the single column */
+  }
+
+  .right-column {
+    order: 2; /* Ensures the right column comes after the quote display */
+  }
+}
+
 .leaderboard-container {
   max-height: 100vh; /* Adjust height as needed */
   overflow-y: auto;
@@ -54,12 +88,4 @@ thead {
 .incorrect {
   color: rgb(255, 0, 0);
   text-decoration: underline;
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
 }
