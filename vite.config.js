@@ -9,6 +9,7 @@ export default defineConfig({
   },
   plugins: [react()],
   build: {
-    outDir: '../../data/www/jettype-front-build'
+    emptyOutDir: true,
+    outDir: '../../data/www/jettype-front-build',
   },
 })
