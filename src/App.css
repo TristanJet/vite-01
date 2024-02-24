@@ -22,6 +22,7 @@
   grid-column: 3 / 4; /* Places the right column in the third column */
   height: 100%; /* Optional: Adjust based on your layout needs */
   display: flex;
+  justify-content: space-evenly;
   flex-direction: column; /* Keeps items stacked vertically */
 }
 
