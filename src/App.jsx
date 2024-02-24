@@ -41,10 +41,15 @@ export function App() {
           setWs(ws);
         };
         ws.onmessage = (event) => {
-          const data = JSON.parse(event.data)
-          if (data.type === 'FIN') {
+          if (event.data === 'PING') {
+            console.log('pinged')
+            ws.send('PONG')
+            return
+          }
+          const parsed = JSON.parse(event.data)
+          if (parsed.type === 'FIN') {
             setGameState(1)
-            console.log(`${data.name}: you typed the quote in ${data.finishTime} seconds!`)
+            console.log(`${parsed.name}: you typed the quote in ${parsed.finishTime} seconds!`)
           }
         }
         ws.onclose = () => {
