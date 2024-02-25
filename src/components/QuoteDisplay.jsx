@@ -67,14 +67,8 @@ export function QuoteDisplay({ websocket, gameState, clearGameState }) {
     // Set up interval to send inputs every 0.5 seconds
     const sendInterval = setInterval(sendInputs, 500);
 
-    // Set up timeout to stop the process after 2 minutes
-    const stopInterval = setTimeout(() => {
-      clearInterval(sendInterval);
-    }, 120000);
-
     return () => {
       clearInterval(sendInterval);
-      clearTimeout(stopInterval);
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [websocket]);
