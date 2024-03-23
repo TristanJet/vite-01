@@ -64,8 +64,8 @@ export function QuoteDisplay({ websocket, gameState, clearGameState }) {
       }
     };
 
-    // Set up interval to send inputs every 0.5 seconds
-    const sendInterval = setInterval(sendInputs, 500);
+    // Set up interval to send inputs every 0.1 seconds
+    const sendInterval = setInterval(sendInputs, 100);
 
     return () => {
       clearInterval(sendInterval);
