@@ -45,6 +45,9 @@ export function QuoteDisplay({ websocket, gameState, clearGameState }) {
         (event.key.length === 1 && charRegex.test(event.key)) ||
         specialKeys.includes(event.key)
       ) {
+        if (inputLength.current === quote.length) {
+          return;
+        }
         setInputState((prevInputState) => [...prevInputState, event.key]);
         inputLength.current += 1;
         sendQueueRef.current.push({ cmd: "ADD", val: event.key });
