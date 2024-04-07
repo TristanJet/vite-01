@@ -13,6 +13,7 @@
 }
 
 .quote-display {
+  letter-spacing: 2px;
   grid-column: 2 / 3;
   margin: 5rem; /* Places the quote display in the center column */
   justify-self: center; /* Ensures the quote display is centered within its column */
@@ -70,7 +71,8 @@ thead {
 }
 
 .typing-cursor {
-  height: 1em; /* Match the line-height of your text */
+  position: absolute;
+  height: 1.5em; /* Match the line-height of your text */
   width: 2px; /* Thin vertical line */
   background-color: black; /* Cursor color */
   display: inline-block; /* Align with inline text */
