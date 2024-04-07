@@ -86,7 +86,7 @@ export function QuoteDisplay({ websocket, gameState, clearGameState }) {
 
   return (
     <div className="quote-display" id="quoteDisplay">
-      <div className="typing-cursor"></div>
+      {inputLength.current === 0 && <div className="typing-cursor"></div>}
       {quote.map((character, index) => (
         <span
           key={index}
@@ -95,6 +95,9 @@ export function QuoteDisplay({ websocket, gameState, clearGameState }) {
           }
         >
           {character}
+          {index === inputLength.current - 1 && (
+            <div className="typing-cursor"></div>
+          )}
         </span>
       ))}
     </div>
