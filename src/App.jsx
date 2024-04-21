@@ -65,37 +65,44 @@ export function App() {
       }
     };
 
-    auth().then((authMsg) => {
-
-      if (authMsg.message === "Authorized") {
-        isAuthed.current = true;
-        setupWebSocketConnection(authMsg.token);
-      } else {
-        console.log(authMsg)
-        console.log("Please sign in!");
-      }
-
-    }).catch(() => {
-      console.log("Auth request failed")
-    });
-
-    
+    auth()
+      .then((authMsg) => {
+        if (authMsg.message === "Authorized") {
+          isAuthed.current = true;
+          setupWebSocketConnection(authMsg.token);
+        } else {
+          console.log(authMsg);
+          console.log("Please sign in!");
+        }
+      })
+      .catch(() => {
+        console.log("Auth request failed");
+      });
   }, []);
 
   return (
     <>
       <GoogleOAuthProvider clientId={googleClient}>
-        <div className="main-container">
-          <QuoteDisplay
-            websocket={ws}
-            gameState={gameState}
-            clearGameState={() => {
-              setGameState(0);
-            }}
-          />
-          <div className="right-column">
-            <LeaderBoard gameState={gameState} />
-            {!isAuthed.current && <GoogleLoginButton />}
+        <div className="app-container">
+          <div className="timer-container">
+            <div className="running">0.0</div>
+            <div className="last">(0.0)</div>
+          </div>
+          <div className="main-container">
+            <div className="left-column">
+              <div>Hi this is the left column</div>
+            </div>
+            <QuoteDisplay
+              websocket={ws}
+              gameState={gameState}
+              clearGameState={() => {
+                setGameState(0);
+              }}
+            />
+            <div className="right-column">
+              <LeaderBoard gameState={gameState} />
+              {!isAuthed.current && <GoogleLoginButton />}
+            </div>
           </div>
         </div>
       </GoogleOAuthProvider>
