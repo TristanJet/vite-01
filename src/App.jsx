@@ -85,7 +85,7 @@ export function App() {
       <GoogleOAuthProvider clientId={googleClient}>
         <div className="app-container">
           <div className="timer-container">
-            <div className="running">0.0</div>
+            <div className="running">0</div>
             <div className="last">(0.0)</div>
           </div>
           <div className="main-container">
