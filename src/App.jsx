@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
+import { Timer } from "./components/Timer.jsx";
 import { QuoteDisplay } from "./components/QuoteDisplay.jsx";
 import { GoogleLoginButton } from "./components/GoogleButton.jsx";
 import { LeaderBoard } from "./components/LeaderBoard.jsx";
@@ -14,7 +15,7 @@ const isDev = import.meta.env.DEV;
 
 export function App() {
   const [ws, setWs] = useState(null);
-  const [gameState, setGameState] = useState(0);
+  const [gameState, setGameState] = useState(false);
   const isAuthed = useRef(false);
 
   useEffect(() => {
@@ -22,7 +23,7 @@ export function App() {
       if (isDev) {
         return {
           message: "Authorized",
-          token: 1234,
+          token: 12345,
         };
       }
       const response = await fetch(`${httpUrl}/api/v1/auth`, {
@@ -48,7 +49,7 @@ export function App() {
           }
           const parsed = JSON.parse(event.data);
           if (parsed.type === "FIN") {
-            setGameState(1);
+            setGameState(false);
             console.log(
               `${parsed.name}: you typed the quote in ${parsed.finishTime} seconds!`
             );
@@ -83,10 +84,7 @@ export function App() {
   return (
     <>
       <GoogleOAuthProvider clientId={googleClient}>
-        <div className="timer-container">
-          <div className="running">0</div>
-          <div className="last">(0.0)</div>
-        </div>
+        <Timer gameState={gameState}/>
         <div className="main-container">
           <div className="left-column">
             <div>Hi this is the left column</div>
@@ -94,8 +92,11 @@ export function App() {
           <QuoteDisplay
             websocket={ws}
             gameState={gameState}
+            startGameState={() => {
+              setGameState(true)
+            }}
             clearGameState={() => {
-              setGameState(0);
+              setGameState(false)
             }}
           />
           <div className="right-column">

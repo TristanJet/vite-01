@@ -27,10 +27,10 @@ export function LeaderBoard({ gameState }) {
   }, []);
 
   useEffect(() => {
-    if (gameState) {
+    if (!gameState) {
       fetchData();
     }
-  }, [gameState]); // The empty array ensures this effect runs only once, similar to componentDidMount
+  }, [gameState]);
 
   return (
     <div className="leaderboard-container">

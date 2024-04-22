@@ -2,19 +2,18 @@ import { useEffect, useState, useRef } from "react";
 
 const quote = "Theory can only take you so far.".split("");
 
-export function QuoteDisplay({ websocket, gameState, clearGameState }) {
+export function QuoteDisplay({ websocket, gameState, startGameState, clearGameState }) {
   const [inputState, setInputState] = useState([]);
   const inputLength = useRef(0);
   const sendQueueRef = useRef([]);
   const delNum = useRef(1);
 
   useEffect(() => {
-    if (gameState === 1) {
-      setInputState([])
-      inputLength.current = 0
+    if (!gameState) {
+      setInputState([]);
+      inputLength.current = 0;
     }
-    clearGameState()
-  }, [gameState])
+  }, [gameState]);
 
   useEffect(() => {
     /* Upon websocket connection, adds listener to keydown, which increase input state and adds to send queue.*/
@@ -24,10 +23,12 @@ export function QuoteDisplay({ websocket, gameState, clearGameState }) {
     const handleKeyDown = (event) => {
       if (event.key === "Backspace") {
         if (inputLength.current === 0) {
+          clearGameState()
           return;
         }
         setInputState((prevInputState) => prevInputState.slice(0, -1));
         inputLength.current -= 1;
+        /**The following logic is only for communicating DEL messages to server */
         if (delNum.current > 1) {
           try {
             sendQueueRef.current[sendQueueRef.current.length - 1].num =
@@ -41,12 +42,16 @@ export function QuoteDisplay({ websocket, gameState, clearGameState }) {
           sendQueueRef.current.push({ cmd: "DEL", num: delNum.current });
           delNum.current += 1;
         }
+      /** */
       } else if (
         (event.key.length === 1 && charRegex.test(event.key)) ||
         specialKeys.includes(event.key)
       ) {
         if (inputLength.current === quote.length) {
           return;
+        }
+        if (!gameState) {
+          startGameState()
         }
         setInputState((prevInputState) => [...prevInputState, event.key]);
         inputLength.current += 1;
