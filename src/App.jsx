@@ -83,26 +83,24 @@ export function App() {
   return (
     <>
       <GoogleOAuthProvider clientId={googleClient}>
-        <div className="app-container">
-          <div className="timer-container">
-            <div className="running">0</div>
-            <div className="last">(0.0)</div>
+        <div className="timer-container">
+          <div className="running">100</div>
+          <div className="last">(0.0)</div>
+        </div>
+        <div className="main-container">
+          <div className="left-column">
+            <div>Hi this is the left column</div>
           </div>
-          <div className="main-container">
-            <div className="left-column">
-              <div>Hi this is the left column</div>
-            </div>
-            <QuoteDisplay
-              websocket={ws}
-              gameState={gameState}
-              clearGameState={() => {
-                setGameState(0);
-              }}
-            />
-            <div className="right-column">
-              <LeaderBoard gameState={gameState} />
-              {!isAuthed.current && <GoogleLoginButton />}
-            </div>
+          <QuoteDisplay
+            websocket={ws}
+            gameState={gameState}
+            clearGameState={() => {
+              setGameState(0);
+            }}
+          />
+          <div className="right-column">
+            <LeaderBoard gameState={gameState} />
+            {!isAuthed.current && <GoogleLoginButton />}
           </div>
         </div>
       </GoogleOAuthProvider>
