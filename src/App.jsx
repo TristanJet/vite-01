@@ -22,7 +22,7 @@ export function App() {
       if (isDev) {
         return {
           message: "Authorized",
-          token: 12345,
+          token: 1234,
         };
       }
       const response = await fetch(`${httpUrl}/api/v1/auth`, {
@@ -84,7 +84,7 @@ export function App() {
     <>
       <GoogleOAuthProvider clientId={googleClient}>
         <div className="timer-container">
-          <div className="running">100</div>
+          <div className="running">0</div>
           <div className="last">(0.0)</div>
         </div>
         <div className="main-container">
