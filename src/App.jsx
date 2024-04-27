@@ -16,6 +16,7 @@ const isDev = import.meta.env.DEV;
 export function App() {
   const [ws, setWs] = useState(null);
   const [gameState, setGameState] = useState(false);
+  const [lastTime, setLastTime] = useState(0);
   const isAuthed = useRef(false);
 
   useEffect(() => {
@@ -50,8 +51,9 @@ export function App() {
           const parsed = JSON.parse(event.data);
           if (parsed.type === "FIN") {
             setGameState(false);
+            setLastTime(parsed.finishTime)
             console.log(
-              `${parsed.name}: you typed the quote in ${parsed.finishTime} seconds!`
+              `${parsed.name}: you typed the quote in ${parsed.finishTime} seconds, with a speed of ${parsed.wpm} wpm!`
             );
           }
         };
@@ -84,7 +86,10 @@ export function App() {
   return (
     <>
       <GoogleOAuthProvider clientId={googleClient}>
-        <Timer gameState={gameState}/>
+        <Timer 
+          gameState={gameState}
+          lastTime={lastTime}
+        />
         <div className="main-container">
           <div className="left-column">
             <div>Hi this is the left column</div>

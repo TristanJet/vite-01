@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-export function Timer({ gameState }) {
+export function Timer({ gameState, lastTime }) {
   const [runningValue, setRunningValue] = useState(0);
 
   useEffect(() => {
@@ -15,7 +15,6 @@ export function Timer({ gameState }) {
       setRunningValue(0)
     }
 
-
     // Clean up the interval on component unmount
     return () => clearInterval(interval);
   }, [gameState]); // Empty dependency array means this effect runs only once on mount
@@ -23,7 +22,7 @@ export function Timer({ gameState }) {
   return (
     <div className="timer-container">
       <div className="running">{runningValue}</div>
-      <div className="last">(0.0)</div>
+      <div className="last">({lastTime ? lastTime : "0.0"})</div>
     </div>
   );
 }
