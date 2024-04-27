@@ -23,7 +23,6 @@ export function QuoteDisplay({ websocket, gameState, startGameState, clearGameSt
     const handleKeyDown = (event) => {
       if (event.key === "Backspace") {
         if (inputLength.current === 0) {
-          clearGameState()
           return;
         }
         setInputState((prevInputState) => prevInputState.slice(0, -1));
@@ -41,6 +40,9 @@ export function QuoteDisplay({ websocket, gameState, startGameState, clearGameSt
         } else {
           sendQueueRef.current.push({ cmd: "DEL", num: delNum.current });
           delNum.current += 1;
+        }
+        if (inputLength.current === 0) {
+          clearGameState();
         }
       /** */
       } else if (
