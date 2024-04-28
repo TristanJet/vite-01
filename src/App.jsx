@@ -5,6 +5,7 @@ import { Timer } from "./components/Timer.jsx";
 import { QuoteDisplay } from "./components/QuoteDisplay.jsx";
 import { GoogleLoginButton } from "./components/GoogleButton.jsx";
 import { LeaderBoard } from "./components/LeaderBoard.jsx";
+import {UserDisplay} from "./components/UserDisplay.jsx"
 
 import "./App.css";
 
@@ -92,7 +93,7 @@ export function App() {
         />
         <div className="main-container">
           <div className="left-column">
-            <div>Hi this is the left column</div>
+            <UserDisplay />
           </div>
           <QuoteDisplay
             websocket={ws}
