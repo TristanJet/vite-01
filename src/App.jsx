@@ -59,6 +59,7 @@ export function App() {
           }
         };
         ws.onclose = () => {
+          setGameState(false);
           console.log("Websocket closed");
         };
         ws.onerror = () => {
