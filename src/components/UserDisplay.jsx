@@ -1,30 +1,23 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 
-const httpUrl = import.meta.env.VITE_HTTP_SERVER_URL;
+//const httpUrl = import.meta.env.VITE_HTTP_SERVER_URL;
 
 export function UserDisplay () {
   const [data, setData] = useState({ username: "", data: {} });
 
-  async function fetchData() {
-    try {
-      const response = await fetch(`${httpUrl}/api/v1/user`, {
-        method: "GET",
-        credentials: "include",
-      });
-      if (response.ok) {
-        const jsonData = (await response.json()).content;
-        setData(jsonData);
-      } else {
-        console.error("Failed to fetch");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  }
+  const isAuthed = false;
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  if (isAuthed) {
+    fetch(`/api/v1/user`, {
+      method: "GET",
+      credentials: "include",
+    }).then(async () => {
+      const jsonData = (await response.json()).content;
+      setData(jsonData);
+    }).catch(() => {
+      console.error("Failed to fetch");
+    })
+  }
 
   return (
     <div className="userdisplay-container">

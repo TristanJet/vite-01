@@ -9,36 +9,22 @@ import {UserDisplay} from "./components/UserDisplay.jsx"
 
 import "./App.css";
 
-const httpUrl = import.meta.env.VITE_HTTP_SERVER_URL;
 const wsUrl = import.meta.env.VITE_WS_SERVER_URL;
 const googleClient = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-const isDev = import.meta.env.DEV;
 
 export function App() {
   const [ws, setWs] = useState(null);
   const [gameState, setGameState] = useState(false);
   const [lastTime, setLastTime] = useState(0);
-  const isAuthed = useRef(false);
+  const isSignedIn = useRef(false);
 
   useEffect(() => {
-    const auth = async () => {
-      if (isDev) {
-        return {
-          message: "Authorized",
-          token: 12345,
-        };
-      }
-      const response = await fetch(`${httpUrl}/api/v1/auth`, {
-        method: "GET",
-        credentials: "include",
-      });
-      const respJson = await response.json();
-      return respJson;
-    };
 
-    const setupWebSocketConnection = async (authToken) => {
+    const setupWebSocketConnection = (authToken) => {
+      console.log('Hello')
       try {
-        const ws = new WebSocket(`${wsUrl}/ws?jet-token=${authToken}`);
+        const url = `/ws?jet-token=${authToken}`;
+        const ws = new WebSocket(url);
         ws.onopen = () => {
           console.log("connected");
           setWs(ws);
@@ -47,7 +33,6 @@ export function App() {
           if (event.data === "PING") {
             console.log("pinged");
             ws.send("PONG");
-            return;
           }
           const parsed = JSON.parse(event.data);
           if (parsed.type === "FIN") {
@@ -70,19 +55,16 @@ export function App() {
       }
     };
 
-    auth()
-      .then((authMsg) => {
-        if (authMsg.message === "Authorized") {
-          isAuthed.current = true;
-          setupWebSocketConnection(authMsg.token);
-        } else {
-          console.log(authMsg);
-          console.log("Please sign in!");
-        }
-      })
-      .catch(() => {
-        console.log("Auth request failed");
-      });
+    fetch('/api/v1/auth', {
+      method: "GET",
+      credentials: "include",
+    }).then(async (resp) => {
+        const parsed = await resp.json()
+        setupWebSocketConnection(parsed.token)
+    }).catch((err) => {
+      console.error(err)
+    })
+    
   }, []);
 
   return (
@@ -108,7 +90,7 @@ export function App() {
           />
           <div className="right-column">
             <LeaderBoard gameState={gameState} />
-            {!isAuthed.current && <GoogleLoginButton />}
+            {!isSignedIn.current && <GoogleLoginButton />}
           </div>
         </div>
       </GoogleOAuthProvider>

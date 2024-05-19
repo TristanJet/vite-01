@@ -1,20 +1,25 @@
 import { useState, useEffect } from "react";
 
-const httpUrl = import.meta.env.VITE_HTTP_SERVER_URL;
+//const httpUrl = import.meta.env.VITE_HTTP_SERVER_URL;
 
 export function LeaderBoard({ gameState }) {
   const [data, setData] = useState([]);
 
   async function fetchData() {
     try {
-      const response = await fetch(`${httpUrl}/api/v1/leaderboard`, {
+      const response = await fetch(`/api/v1/leaderboard`, {
         method: "GET",
         credentials: "include",
       });
-      if (response.ok) {
+      if (response.status === 200) {
+        console.log('1')
         const jsonData = (await response.json()).content;
         setData(jsonData);
+      } else if (response.status === 204) {
+        console.log('2')
+        return
       } else {
+        console.log('3')
         console.error("Failed to fetch");
       }
     } catch (error) {
