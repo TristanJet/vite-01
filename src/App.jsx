@@ -9,13 +9,14 @@ import {UserDisplay} from "./components/UserDisplay.jsx"
 
 import "./App.css";
 
-const wsUrl = import.meta.env.VITE_WS_SERVER_URL;
 const googleClient = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 export function App() {
   const [ws, setWs] = useState(null);
   const [gameState, setGameState] = useState(false);
   const [lastTime, setLastTime] = useState(0);
+  const [isAuthed, setIsAuthed] = useState(false);
+  const [quoteSelected, setQuoteSelected] = useState(false);
   const isSignedIn = useRef(false);
 
   useEffect(() => {
@@ -32,13 +33,13 @@ export function App() {
         console.log("Fetched " + fetchAttempts + " times.")
         if (resp.ok) {
           parsed = await resp.json()
-          console.log(parsed.token)
         } else {
           console.error('Fetch error /auth: ' + err)
           break
         }
       }
       if (parsed.token) {
+        setIsAuthed(true)
         setupWebSocketConnection(parsed.token)
       } else {
         console.error("Client cookie error.")
@@ -51,6 +52,7 @@ export function App() {
         const ws = new WebSocket(url);
         ws.onopen = () => {
           console.log("connected");
+          setQuoteSelected(true);
           setWs(ws);
         };
         ws.onmessage = (event) => {
@@ -69,6 +71,7 @@ export function App() {
         };
         ws.onclose = () => {
           setGameState(false);
+          setQuoteSelected(false);
           console.log("Websocket closed");
         };
         ws.onerror = () => {
@@ -92,10 +95,21 @@ export function App() {
         />
         <div className="main-container">
           <div className="left-column">
-            <UserDisplay />
+            <UserDisplay 
+            isAuthed={isAuthed}
+            quoteSelectedOff={()=> {
+              setQuoteSelected(false)
+            }}
+            />
           </div>
           <QuoteDisplay
-            websocket={ws}
+            quoteSelected={quoteSelected}
+            setQuoteSelectTrue={() => {
+              setQuoteSelected(true)
+            }}
+            send={(data)=> {
+              ws.send(data)
+            }}
             gameState={gameState}
             startGameState={() => {
               setGameState(true)
@@ -105,7 +119,10 @@ export function App() {
             }}
           />
           <div className="right-column">
-            <LeaderBoard gameState={gameState} />
+            <LeaderBoard 
+            gameState={gameState}
+            quoteSelected={quoteSelected} 
+            />
             {!isSignedIn.current && <GoogleLoginButton />}
           </div>
         </div>

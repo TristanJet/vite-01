@@ -2,12 +2,12 @@ import { useState, useEffect } from "react";
 
 //const httpUrl = import.meta.env.VITE_HTTP_SERVER_URL;
 
-export function LeaderBoard({ gameState }) {
+export function LeaderBoard({ gameState, quoteSelected }) {
   const [data, setData] = useState([]);
 
   async function fetchData() {
     try {
-      const response = await fetch(`/api/v1/leaderboard`, {
+      const response = await fetch('/api/v1/leaderboard', {
         method: "GET",
         credentials: "include",
       });
@@ -26,13 +26,13 @@ export function LeaderBoard({ gameState }) {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [quoteSelected]);
 
   useEffect(() => {
-    if (!gameState) {
-      fetchData();
+    if (gameState) {
+      fetchData()
     }
-  }, [gameState]);
+  }, [gameState])
 
   return (
     <div className="leaderboard-container">

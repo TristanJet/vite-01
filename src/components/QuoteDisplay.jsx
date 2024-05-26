@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 
 const quote = "Theory can only take you so far.".split("");
 
-export function QuoteDisplay({ websocket, gameState, startGameState, clearGameState }) {
+export function QuoteDisplay({ quoteSelected, setQuoteSelectTrue, send, gameState, startGameState, clearGameState }) {
   const [inputState, setInputState] = useState([]);
   const inputLength = useRef(0);
   const sendQueueRef = useRef([]);
@@ -15,12 +15,12 @@ export function QuoteDisplay({ websocket, gameState, startGameState, clearGameSt
     }
   }, [gameState]);
 
-  useEffect(() => {
-    /* Upon websocket connection, adds listener to keydown, which increase input state and adds to send queue.*/
-    const charRegex = /[a-z0-9]/i;
-    const specialKeys = [" ", ".", ",", "?"];
-
+  useEffect(() => { 
+    /* Upon send connection, adds listener to keydown, which increase input state and adds to send queue.*/
     const handleKeyDown = (event) => {
+      const charRegex = /[a-z0-9]/i;
+      const specialKeys = [" ", ".", ",", "?"];
+
       if (event.key === "Backspace") {
         if (inputLength.current === 0) {
           return;
@@ -62,26 +62,35 @@ export function QuoteDisplay({ websocket, gameState, startGameState, clearGameSt
       }
     };
 
-    if (websocket) {
-      window.addEventListener("keydown", handleKeyDown);
-    }
-
     const sendInputs = () => {
       if (sendQueueRef.current.length > 0) {
         console.log(sendQueueRef.current);
-        websocket.send(JSON.stringify({ commands: sendQueueRef.current }));
+        send(JSON.stringify({ commands: sendQueueRef.current }));
         sendQueueRef.current = []; // Clear the queue
       }
     };
 
     // Set up interval to send inputs every 0.1 seconds
-    const sendInterval = setInterval(sendInputs, 100);
+    let sendInterval;
+    if (quoteSelected) {
+      console.log("adding event listeners")
+      window.addEventListener("keydown", handleKeyDown);
+      sendInterval = setInterval(sendInputs, 100);
+    } else {
+      clearGameState()
+      window.removeEventListener("keydown", handleKeyDown);
+      if (sendInterval) {
+        clearInterval(sendInterval);
+      }
+    }
 
     return () => {
+      clearGameState()
       clearInterval(sendInterval);
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [websocket]);
+
+  }, [quoteSelected]);
 
   const correctState = inputState.map((inputChar, index) => {
     if (inputChar === quote[index]) {
@@ -92,7 +101,11 @@ export function QuoteDisplay({ websocket, gameState, startGameState, clearGameSt
   });
 
   return (
-    <div className="quote-display" id="quoteDisplay">
+    <div 
+    className={quoteSelected ? "quote-display-selected" : "quote-display-unselected"} 
+    id="quoteDisplay" 
+    onClick={ quoteSelected ? null : setQuoteSelectTrue }
+    >
       {inputLength.current === 0 && <div className="typing-cursor"></div>}
       {quote.map((character, index) => (
         <span
