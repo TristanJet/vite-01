@@ -20,8 +20,32 @@ export function App() {
 
   useEffect(() => {
 
+    const fetchAuth = async () => {
+      let fetchAttempts = 0;
+      let parsed = {};
+      while (!parsed.token && fetchAttempts < 2) {
+        const resp = await fetch('/api/v1/auth', {
+          method: "GET",
+          credentials: "include",
+        });
+        fetchAttempts++
+        console.log("Fetched " + fetchAttempts + " times.")
+        if (resp.ok) {
+          parsed = await resp.json()
+          console.log(parsed.token)
+        } else {
+          console.error('Fetch error /auth: ' + err)
+          break
+        }
+      }
+      if (parsed.token) {
+        setupWebSocketConnection(parsed.token)
+      } else {
+        console.error("Client cookie error.")
+      }
+    }
+
     const setupWebSocketConnection = (authToken) => {
-      console.log('Hello')
       try {
         const url = `/ws?jet-token=${authToken}`;
         const ws = new WebSocket(url);
@@ -55,15 +79,7 @@ export function App() {
       }
     };
 
-    fetch('/api/v1/auth', {
-      method: "GET",
-      credentials: "include",
-    }).then(async (resp) => {
-        const parsed = await resp.json()
-        setupWebSocketConnection(parsed.token)
-    }).catch((err) => {
-      console.error(err)
-    })
+    fetchAuth();
     
   }, []);
 

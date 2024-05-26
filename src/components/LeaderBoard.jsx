@@ -12,14 +12,11 @@ export function LeaderBoard({ gameState }) {
         credentials: "include",
       });
       if (response.status === 200) {
-        console.log('1')
         const jsonData = (await response.json()).content;
         setData(jsonData);
       } else if (response.status === 204) {
-        console.log('2')
         return
       } else {
-        console.log('3')
         console.error("Failed to fetch");
       }
     } catch (error) {
