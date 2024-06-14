@@ -1,8 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 
-const quote = "Theory can only take you so far.".split("");
-
-export function QuoteDisplay({ quoteSelected, setQuoteSelectTrue, send, gameState, startGameState, clearGameState }) {
+export function QuoteDisplay({ quote = [], quoteSelected, setQuoteSelectTrue, send, gameState, startGameState, clearGameState }) {
   const [inputState, setInputState] = useState([]);
   const inputLength = useRef(0);
   const sendQueueRef = useRef([]);

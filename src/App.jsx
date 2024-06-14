@@ -18,6 +18,7 @@ export function App() {
   const [isAuthed, setIsAuthed] = useState(false);
   const [quoteSelected, setQuoteSelected] = useState(false);
   const isSignedIn = useRef(false);
+  const quoteRef = useRef('');
 
   useEffect(() => {
 
@@ -34,15 +35,13 @@ export function App() {
         if (resp.ok) {
           parsed = await resp.json()
         } else {
-          console.error('Fetch error /auth: ' + err)
           break
         }
       }
       if (parsed.token) {
-        setIsAuthed(true)
-        setupWebSocketConnection(parsed.token)
+        return parsed.token;
       } else {
-        console.error("Client cookie error.")
+        return 0;
       }
     }
 
@@ -82,7 +81,32 @@ export function App() {
       }
     };
 
-    fetchAuth();
+    const fetchQuote = async () => {
+      const resp = await fetch('/api/v1/quote', {
+        method: "GET",
+        credentials: "include",
+      });
+      if (resp.ok) {
+        return (await resp.json()).content.quote;
+      } else {
+        return 0;
+      }
+    }
+
+    fetchAuth().then((parsedToken) => {
+      if (parsedToken) {
+        fetchQuote().then((quote) => {
+          if (quote) {
+            quoteRef.current = quote;
+            setupWebSocketConnection(parsedToken);
+          } else {
+            console.error('Fetch error /quote: ');
+          }
+        })
+      } else {
+        console.error('Fetch error /auth: ')
+      }
+    })
     
   }, []);
 
@@ -103,6 +127,7 @@ export function App() {
             />
           </div>
           <QuoteDisplay
+            quote = {quoteRef.current.split('')}
             quoteSelected={quoteSelected}
             setQuoteSelectTrue={() => {
               setQuoteSelected(true)

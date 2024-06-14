@@ -1,8 +1,6 @@
 import React from "react";
 import { GoogleLogin } from "@react-oauth/google";
 
-const httpUrl = import.meta.env.VITE_HTTP_SERVER_URL;
-
 export function GoogleLoginButton() {
   const handleLoginSuccess = async (credentialResponse) => {
     const url = '/api/v1/signin';
