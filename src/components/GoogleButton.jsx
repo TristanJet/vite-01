@@ -1,6 +1,6 @@
 import { GoogleLogin } from "@react-oauth/google";
 
-export function GoogleLoginButton({ setSignedTrue }) {
+export function GoogleLoginButton({}) {
   const handleLoginSuccess = async (credentialResponse) => {
     const response = await fetch("/api/v1/signin", {
       method: "POST",
@@ -11,7 +11,7 @@ export function GoogleLoginButton({ setSignedTrue }) {
       body: JSON.stringify(credentialResponse),
     });
     if (response.ok) {
-      setSignedTrue()
+      window.location.reload()
     } else {
       console.error('/signin error')
     }

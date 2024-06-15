@@ -151,9 +151,7 @@ export function App() {
           />
           <div className="right-column">
             <LeaderBoard gameState={gameState} quoteSelected={quoteSelected} />
-            {!isSigned && <GoogleLoginButton setSignedTrue={() => {
-              setSigned(true);
-              }}/>}
+            {!isSigned && <GoogleLoginButton/>}
           </div>
         </div>
       </GoogleOAuthProvider>
