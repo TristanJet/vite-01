@@ -35,13 +35,13 @@ export function App() {
             return parsed;
           }
           if (fetchAttempts < 2) {
-            fetch("api/v1/guest", {
+            const response = await fetch("api/v1/guest", {
               method: "GET",
               credentials: "include",
-            }).catch((err) => {
-              console.error(`/guest error: ${err}`)
-              return 0;
             });
+            if (!response.ok) {
+              return 0;
+            }
           }
         } else {
           return 0;
