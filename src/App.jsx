@@ -5,7 +5,7 @@ import { Timer } from "./components/Timer.jsx";
 import { QuoteDisplay } from "./components/QuoteDisplay.jsx";
 import { GoogleLoginButton } from "./components/GoogleButton.jsx";
 import { LeaderBoard } from "./components/LeaderBoard.jsx";
-import {UserDisplay} from "./components/UserDisplay.jsx"
+import { UserDisplay } from "./components/UserDisplay.jsx";
 
 import "./App.css";
 
@@ -18,32 +18,38 @@ export function App() {
   const [isAuthed, setIsAuthed] = useState(false);
   const [quoteSelected, setQuoteSelected] = useState(false);
   const isSignedIn = useRef(false);
-  const quoteRef = useRef('');
+  const quoteRef = useRef("");
 
   useEffect(() => {
-
     const fetchAuth = async () => {
-      let fetchAttempts = 0;
       let parsed = {};
-      while (!parsed.token && fetchAttempts < 2) {
-        const resp = await fetch('/api/v1/auth', {
+      let fetchAttempts = 0;
+      while (fetchAttempts < 2) {
+        const resp = await fetch("/api/v1/auth", {
           method: "GET",
           credentials: "include",
         });
-        fetchAttempts++
-        console.log("Fetched " + fetchAttempts + " times.")
+        fetchAttempts++;
         if (resp.ok) {
-          parsed = await resp.json()
+          parsed = await resp.json();
+          if (parsed.authstatus) {
+            return parsed.token;
+          }
+          if (fetchAttempts < 2) {
+            fetch("api/v1/guest", {
+              method: "GET",
+              credentials: "include",
+            }).catch((err) => {
+              console.error(`/guest error: ${err}`)
+              return 0;
+            });
+          }
         } else {
-          break
+          return 0;
         }
       }
-      if (parsed.token) {
-        return parsed.token;
-      } else {
-        return 0;
-      }
-    }
+      return 0;
+    };
 
     const setupWebSocketConnection = (authToken) => {
       try {
@@ -62,7 +68,7 @@ export function App() {
           const parsed = JSON.parse(event.data);
           if (parsed.type === "FIN") {
             setGameState(false);
-            setLastTime(parsed.finishTime)
+            setLastTime(parsed.finishTime);
             console.log(
               `${parsed.name}: you typed the quote in ${parsed.finishTime} seconds, with a speed of ${parsed.wpm} wpm!`
             );
@@ -82,7 +88,7 @@ export function App() {
     };
 
     const fetchQuote = async () => {
-      const resp = await fetch('/api/v1/quote', {
+      const resp = await fetch("/api/v1/quote", {
         method: "GET",
         credentials: "include",
       });
@@ -91,63 +97,58 @@ export function App() {
       } else {
         return 0;
       }
-    }
+    };
 
     fetchAuth().then((parsedToken) => {
+      setIsAuthed(true);
       if (parsedToken) {
         fetchQuote().then((quote) => {
           if (quote) {
             quoteRef.current = quote;
             setupWebSocketConnection(parsedToken);
           } else {
-            console.error('Fetch error /quote: ');
+            console.error("Fetch error /quote: ");
           }
-        })
+        });
       } else {
-        console.error('Fetch error /auth: ')
+        console.error("Fetch error /auth: ");
       }
-    })
-    
+    });
+
   }, []);
 
   return (
     <>
       <GoogleOAuthProvider clientId={googleClient}>
-        <Timer 
-          gameState={gameState}
-          lastTime={lastTime}
-        />
+        <Timer gameState={gameState} lastTime={lastTime} />
         <div className="main-container">
           <div className="left-column">
-            <UserDisplay 
-            isAuthed={isAuthed}
-            quoteSelectedOff={()=> {
-              setQuoteSelected(false)
-            }}
+            <UserDisplay
+              isAuthed={isAuthed}
+              quoteSelectedOff={() => {
+                setQuoteSelected(false);
+              }}
             />
           </div>
           <QuoteDisplay
-            quote = {quoteRef.current.split('')}
+            quote={quoteRef.current.split("")}
             quoteSelected={quoteSelected}
             setQuoteSelectTrue={() => {
-              setQuoteSelected(true)
+              setQuoteSelected(true);
             }}
-            send={(data)=> {
-              ws.send(data)
+            send={(data) => {
+              ws.send(data);
             }}
             gameState={gameState}
             startGameState={() => {
-              setGameState(true)
+              setGameState(true);
             }}
             clearGameState={() => {
-              setGameState(false)
+              setGameState(false);
             }}
           />
           <div className="right-column">
-            <LeaderBoard 
-            gameState={gameState}
-            quoteSelected={quoteSelected} 
-            />
+            <LeaderBoard gameState={gameState} quoteSelected={quoteSelected} />
             {!isSignedIn.current && <GoogleLoginButton />}
           </div>
         </div>
