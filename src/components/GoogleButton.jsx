@@ -1,6 +1,6 @@
 import { GoogleLogin } from "@react-oauth/google";
 
-export function GoogleLoginButton({ isSigned, setSignedTrue }) {
+export function GoogleLoginButton({ setSignedTrue }) {
   const handleLoginSuccess = async (credentialResponse) => {
     const response = await fetch("/api/v1/signin", {
       method: "POST",
@@ -23,8 +23,6 @@ export function GoogleLoginButton({ isSigned, setSignedTrue }) {
   };
 
   return (
-    <>
-      {!isSigned && <GoogleLogin onSuccess={handleLoginSuccess} onError={handleLoginError} />}
-    </>
+    <GoogleLogin onSuccess={handleLoginSuccess} onError={handleLoginError}/>
   );
 }
