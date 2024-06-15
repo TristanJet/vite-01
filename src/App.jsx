@@ -17,12 +17,11 @@ export function App() {
   const [lastTime, setLastTime] = useState(0);
   const [isAuthed, setIsAuthed] = useState(false);
   const [quoteSelected, setQuoteSelected] = useState(false);
-  const isSignedIn = useRef(false);
+  const [isSigned, setSigned] = useState(false);
   const quoteRef = useRef("");
 
   useEffect(() => {
     const fetchAuth = async () => {
-      let parsed = {};
       let fetchAttempts = 0;
       while (fetchAttempts < 2) {
         const resp = await fetch("/api/v1/auth", {
@@ -31,9 +30,9 @@ export function App() {
         });
         fetchAttempts++;
         if (resp.ok) {
-          parsed = await resp.json();
+          const parsed = await resp.json();
           if (parsed.authstatus) {
-            return parsed.token;
+            return parsed;
           }
           if (fetchAttempts < 2) {
             fetch("api/v1/guest", {
@@ -99,13 +98,16 @@ export function App() {
       }
     };
 
-    fetchAuth().then((parsedToken) => {
-      setIsAuthed(true);
-      if (parsedToken) {
+    fetchAuth().then((authobj) => {
+      if (authobj) {
+        setIsAuthed(true);
+        if (authobj.signed) {
+          setSigned(true);
+        } 
         fetchQuote().then((quote) => {
           if (quote) {
             quoteRef.current = quote;
-            setupWebSocketConnection(parsedToken);
+            setupWebSocketConnection(authobj.token);
           } else {
             console.error("Fetch error /quote: ");
           }
@@ -149,7 +151,9 @@ export function App() {
           />
           <div className="right-column">
             <LeaderBoard gameState={gameState} quoteSelected={quoteSelected} />
-            {!isSignedIn.current && <GoogleLoginButton />}
+            <GoogleLoginButton isSigned={isSigned} setSignedTrue={() => {
+              setSigned(true);
+              }}/>
           </div>
         </div>
       </GoogleOAuthProvider>

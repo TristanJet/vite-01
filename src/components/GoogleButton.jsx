@@ -1,11 +1,8 @@
-import React from "react";
 import { GoogleLogin } from "@react-oauth/google";
 
-export function GoogleLoginButton() {
+export function GoogleLoginButton({ isSigned, setSignedTrue }) {
   const handleLoginSuccess = async (credentialResponse) => {
-    const url = '/api/v1/signin';
-
-    const response = await fetch(url, {
+    const response = await fetch("/api/v1/signin", {
       method: "POST",
       credentials: "include",
       headers: {
@@ -13,8 +10,11 @@ export function GoogleLoginButton() {
       },
       body: JSON.stringify(credentialResponse),
     });
-    const json = await response.json();
-    console.log(json);
+    if (response.ok) {
+      setSignedTrue()
+    } else {
+      console.error('/signin error')
+    }
   };
 
   const handleLoginError = () => {
@@ -23,6 +23,8 @@ export function GoogleLoginButton() {
   };
 
   return (
-    <GoogleLogin onSuccess={handleLoginSuccess} onError={handleLoginError} />
+    <>
+      {!isSigned && <GoogleLogin onSuccess={handleLoginSuccess} onError={handleLoginError} />}
+    </>
   );
 }
