@@ -17,7 +17,7 @@ export function App() {
   const [lastTime, setLastTime] = useState(0);
   const [isAuthed, setIsAuthed] = useState(false);
   const [quoteSelected, setQuoteSelected] = useState(false);
-  const [isSigned, setSigned] = useState(false);
+  const [isSigned, setSigned] = useState(true);
   const quoteRef = useRef("");
 
   useEffect(() => {
@@ -101,8 +101,8 @@ export function App() {
     fetchAuth().then((authobj) => {
       if (authobj) {
         setIsAuthed(true);
-        if (authobj.signed) {
-          setSigned(true);
+        if (!authobj.signed) {
+          setSigned(false);
         } 
         fetchQuote().then((quote) => {
           if (quote) {

@@ -1,29 +1,33 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "react";
 
 //import {UserName} from "./UserName"
 
 //const httpUrl = import.meta.env.VITE_HTTP_SERVER_URL;
 
-export function UserDisplay ({ isAuthed, quoteSelectedOff }) {
+export function UserDisplay({ isAuthed, quoteSelectedOff }) {
   const [data, setData] = useState({ username: "", data: {} });
-  useEffect( () => {
-    fetchAndAuth(isAuthed, setData)
-  }, [isAuthed])
+  useEffect(() => {
+    fetchAndAuth(isAuthed, setData);
+  }, [isAuthed]);
 
   return (
     <div className="userdisplay-container">
       <table>
         <thead>
-          <UserName 
-          data={data}
-          isAuthed={isAuthed}
-          setData={(data) => {
-            setData(data)
-          }}
-          quoteSelectedOff={()=> {
-            quoteSelectedOff()
-          }}
-          />
+          {data.username ? (
+            <UserName username={data.username} />
+          ) : (
+            <FormUserName
+              isAuthed={isAuthed}
+              setData={(data) => {
+                setData(data);
+                console.log('User data was changed.')
+              }}
+              quoteSelectedOff={() => {
+                quoteSelectedOff();
+              }}
+            />
+          )}
         </thead>
         <tbody>
           {Object.entries(data.data || {}).map(([key, value]) => (
@@ -38,15 +42,15 @@ export function UserDisplay ({ isAuthed, quoteSelectedOff }) {
   );
 }
 
-function UserName({ data, isAuthed, setData, quoteSelectedOff }) {
-
+function FormUserName({ isAuthed, setData, quoteSelectedOff }) {
   const submitHandle = async (e) => {
     e.preventDefault();
 
     const formData = new FormData(e.target);
     const formJson = Object.fromEntries(formData.entries());
-    const response = await fetch('/api/v1/user', {
-      method: "POST", 
+    console.log(formJson)
+    const response = await fetch("/api/v1/user", {
+      method: "POST",
       body: JSON.stringify(formJson),
       headers: {
         "Content-Type": "application/json",
@@ -54,46 +58,50 @@ function UserName({ data, isAuthed, setData, quoteSelectedOff }) {
       credentials: "include",
     });
     if (response.ok) {
-      fetchAndAuth(isAuthed, setData)
+      const jsonData = await fetchAndAuth(isAuthed);
+      setData(jsonData);
+    } else {
+      console.error('/user post error')
     }
-  }
+  };
 
   const focusHandle = () => {
-    quoteSelectedOff()
-  }
+    quoteSelectedOff();
+  };
 
-  if (data.username) {
-    return (
-    <tr>
-      <th>{data.username}</th>
-      <th></th>   
-    </tr>
-    )
-  } else {
-    return (
+  return (
     <tr>
       <td>
-      <form onSubmit={submitHandle} onFocus={focusHandle}>
-        <label>
-          Enter name to be displayed here: <input name="name" />
-        </label>
-        <button type="submit">send</button>
-      </form>
+        <form onSubmit={submitHandle} onFocus={focusHandle}>
+          <label>
+            Enter name to be displayed here: <input name="name" />
+          </label>
+          <button type="submit">send</button>
+        </form>
       </td>
     </tr>
-  )}
+  );
 }
 
-function fetchAndAuth (isAuthed, setData) {
+function UserName(username) {
+  return (
+    <tr>
+      <th>{username}</th>
+      <th></th>
+    </tr>
+  );
+}
+
+async function fetchAndAuth(isAuthed) {
   if (isAuthed) {
-    fetch('/api/v1/user', {
+    const response = await fetch("/api/v1/user", {
       method: "GET",
       credentials: "include",
-    }).then(async (response) => {
-      const jsonData = (await response.json()).content;
-      setData(jsonData);
-    }).catch(() => {
-      console.error("Failed to fetch");
-    })
+    });
+    if (response.ok) {
+      return (await response.json()).content;
+    } else {
+      console.error("/user error");
+    }
   }
 }

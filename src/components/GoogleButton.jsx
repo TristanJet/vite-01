@@ -1,6 +1,6 @@
 import { GoogleLogin } from "@react-oauth/google";
 
-export function GoogleLoginButton({}) {
+export function GoogleLoginButton() {
   const handleLoginSuccess = async (credentialResponse) => {
     const response = await fetch("/api/v1/signin", {
       method: "POST",
@@ -11,9 +11,9 @@ export function GoogleLoginButton({}) {
       body: JSON.stringify(credentialResponse),
     });
     if (response.ok) {
-      window.location.reload()
+      window.location.reload();
     } else {
-      console.error('/signin error')
+      console.error("/signin error");
     }
   };
 
@@ -23,6 +23,6 @@ export function GoogleLoginButton({}) {
   };
 
   return (
-    <GoogleLogin onSuccess={handleLoginSuccess} onError={handleLoginError}/>
+    <GoogleLogin onSuccess={handleLoginSuccess} onError={handleLoginError} />
   );
 }
