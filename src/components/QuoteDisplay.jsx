@@ -1,6 +1,14 @@
 import { useEffect, useState, useRef } from "react";
 
-export function QuoteDisplay({ quote = [], quoteSelected, setQuoteSelectTrue, send, gameState, startGameState, clearGameState }) {
+export function QuoteDisplay({
+  quote = [],
+  quoteSelected,
+  setQuoteSelectTrue,
+  send,
+  gameState,
+  startGameState,
+  clearGameState,
+}) {
   const [inputState, setInputState] = useState([]);
   const inputLength = useRef(0);
   const sendQueueRef = useRef([]);
@@ -13,7 +21,7 @@ export function QuoteDisplay({ quote = [], quoteSelected, setQuoteSelectTrue, se
     }
   }, [gameState]);
 
-  useEffect(() => { 
+  useEffect(() => {
     /* Upon send connection, adds listener to keydown, which increase input state and adds to send queue.*/
     const handleKeyDown = (event) => {
       const charRegex = /[a-z0-9]/i;
@@ -42,7 +50,7 @@ export function QuoteDisplay({ quote = [], quoteSelected, setQuoteSelectTrue, se
         if (inputLength.current === 0) {
           clearGameState();
         }
-      /** */
+        /** */
       } else if (
         (event.key.length === 1 && charRegex.test(event.key)) ||
         specialKeys.includes(event.key)
@@ -51,7 +59,7 @@ export function QuoteDisplay({ quote = [], quoteSelected, setQuoteSelectTrue, se
           return;
         }
         if (!gameState) {
-          startGameState()
+          startGameState();
         }
         setInputState((prevInputState) => [...prevInputState, event.key]);
         inputLength.current += 1;
@@ -71,11 +79,11 @@ export function QuoteDisplay({ quote = [], quoteSelected, setQuoteSelectTrue, se
     // Set up interval to send inputs every 0.1 seconds
     let sendInterval;
     if (quoteSelected) {
-      console.log("adding event listeners")
+      console.log("adding event listeners");
       window.addEventListener("keydown", handleKeyDown);
       sendInterval = setInterval(sendInputs, 100);
     } else {
-      clearGameState()
+      clearGameState();
       window.removeEventListener("keydown", handleKeyDown);
       if (sendInterval) {
         clearInterval(sendInterval);
@@ -83,11 +91,10 @@ export function QuoteDisplay({ quote = [], quoteSelected, setQuoteSelectTrue, se
     }
 
     return () => {
-      clearGameState()
+      clearGameState();
       clearInterval(sendInterval);
       window.removeEventListener("keydown", handleKeyDown);
     };
-
   }, [quoteSelected]);
 
   const correctState = inputState.map((inputChar, index) => {
@@ -99,25 +106,29 @@ export function QuoteDisplay({ quote = [], quoteSelected, setQuoteSelectTrue, se
   });
 
   return (
-    <div 
-    className={quoteSelected ? "quote-display-selected" : "quote-display-unselected"} 
-    id="quoteDisplay" 
-    onClick={ quoteSelected ? null : setQuoteSelectTrue }
+    <div
+      className={
+        quoteSelected ? "quote-display-selected" : "quote-display-unselected"
+      }
+      id="quoteDisplay"
+      onClick={quoteSelected ? null : setQuoteSelectTrue}
     >
-      {inputLength.current === 0 && <div className="typing-cursor"></div>}
-      {quote.map((character, index) => (
-        <span
-          key={index}
-          className={
-            index < correctState.length ? correctState[index] : "untyped"
-          }
-        >
-          {character}
-          {index === inputLength.current - 1 && (
-            <div className="typing-cursor"></div>
-          )}
-        </span>
-      ))}
+      <div className="quote-container">
+        {inputLength.current === 0 && <div className="typing-cursor"></div>}
+        {quote.map((character, index) => (
+          <span
+            key={index}
+            className={
+              index < correctState.length ? correctState[index] : "untyped"
+            }
+          >
+            {character}
+            {index === inputLength.current - 1 && (
+              <span className="typing-cursor"></span>
+            )}
+          </span>
+        ))}
+      </div>
     </div>
   );
 }
