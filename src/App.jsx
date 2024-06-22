@@ -69,7 +69,7 @@ export function App() {
             setGameState(false);
             setLastTime(parsed.finishTime);
             console.log(
-              `${parsed.name}: you typed the quote in ${parsed.finishTime} seconds, with a speed of ${parsed.wpm} wpm!`
+              `${parsed.name}: you typed the quote in ${parsed.finishTime} seconds, with a speed of ${parsed.wpm} wpm!`,
             );
           }
         };
@@ -103,7 +103,7 @@ export function App() {
         setIsAuthed(true);
         if (!authobj.signed) {
           setSigned(false);
-        } 
+        }
         fetchQuote().then((quote) => {
           if (quote) {
             quoteRef.current = quote;
@@ -116,7 +116,6 @@ export function App() {
         console.error("Fetch error /auth: ");
       }
     });
-
   }, []);
 
   return (
@@ -133,7 +132,7 @@ export function App() {
             />
           </div>
           <QuoteDisplay
-            quote={quoteRef.current.split("")}
+            quote={quoteRef.current}
             quoteSelected={quoteSelected}
             setQuoteSelectTrue={() => {
               setQuoteSelected(true);
@@ -151,7 +150,7 @@ export function App() {
           />
           <div className="right-column">
             <LeaderBoard gameState={gameState} quoteSelected={quoteSelected} />
-            {!isSigned && <GoogleLoginButton/>}
+            {!isSigned && <GoogleLoginButton />}
           </div>
         </div>
       </GoogleOAuthProvider>

@@ -48,6 +48,10 @@
     align-items: center;
 }
 
+.word {
+    display: inline-flex; /* Keeps words together */
+}
+
 .left-column {
     font-size: medium;
 }
@@ -93,13 +97,12 @@ thead {
 }
 
 .typing-cursor {
+    position: absolute;
     height: 1.5em; /* Match the line-height of your text */
-    width: 2px; /* Thin vertical line */
+    width: 3px; /* Thin vertical line */
     background-color: black; /* Cursor color */
     display: inline-block; /* Align with inline text */
     animation: blink 1s infinite;
-    vertical-align: bottom;
-    margin-left: -2px;
 }
 
 .untyped,
