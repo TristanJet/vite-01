@@ -25,10 +25,6 @@ export function LeaderBoard({ gameState, quoteSelected }) {
   }
 
   useEffect(() => {
-    fetchData();
-  }, [quoteSelected]);
-
-  useEffect(() => {
     if (!gameState) {
       fetchData();
     }
