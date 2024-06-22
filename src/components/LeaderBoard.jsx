@@ -7,7 +7,7 @@ export function LeaderBoard({ gameState, quoteSelected }) {
 
   async function fetchData() {
     try {
-      const response = await fetch('/api/v1/leaderboard', {
+      const response = await fetch("/api/v1/leaderboard", {
         method: "GET",
         credentials: "include",
       });
@@ -15,7 +15,7 @@ export function LeaderBoard({ gameState, quoteSelected }) {
         const jsonData = (await response.json()).content;
         setData(jsonData);
       } else if (response.status === 204) {
-        return
+        return;
       } else {
         console.error("Failed to fetch");
       }
@@ -29,10 +29,10 @@ export function LeaderBoard({ gameState, quoteSelected }) {
   }, [quoteSelected]);
 
   useEffect(() => {
-    if (gameState) {
-      fetchData()
+    if (!gameState) {
+      fetchData();
     }
-  }, [gameState])
+  }, [gameState]);
 
   return (
     <div className="leaderboard-container">

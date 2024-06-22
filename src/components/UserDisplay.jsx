@@ -1,27 +1,30 @@
-import { useEffect, useState } from "react";
-
-//import {UserName} from "./UserName"
-
-//const httpUrl = import.meta.env.VITE_HTTP_SERVER_URL;
+import { useEffect, useState, useRef } from "react";
 
 export function UserDisplay({ isAuthed, quoteSelectedOff }) {
-  const [data, setData] = useState({ username: "", data: {} });
+  const [userName, setUserName] = useState("");
+  const userData = useRef({});
+
   useEffect(() => {
-    fetchAndAuth(isAuthed, setData);
+    fetchAndAuth(isAuthed).then((content) => {
+      if (content) {
+        userData.current = content.data;
+        setUserName(content.username);
+      }
+    });
   }, [isAuthed]);
 
   return (
     <div className="userdisplay-container">
       <table>
         <thead>
-          {data.username ? (
-            <UserName username={data.username} />
+          {userName ? (
+            <UserName username={userName} />
           ) : (
             <FormUserName
               isAuthed={isAuthed}
-              setData={(data) => {
-                setData(data);
-                console.log('User data was changed.')
+              setData={(content) => {
+                userData.current = content.data;
+                setUserName(content.username);
               }}
               quoteSelectedOff={() => {
                 quoteSelectedOff();
@@ -30,7 +33,7 @@ export function UserDisplay({ isAuthed, quoteSelectedOff }) {
           )}
         </thead>
         <tbody>
-          {Object.entries(data.data || {}).map(([key, value]) => (
+          {Object.entries(userData.current || {}).map(([key, value]) => (
             <tr key={key}>
               <td>{key}</td>
               <td>{value}</td>
@@ -48,7 +51,7 @@ function FormUserName({ isAuthed, setData, quoteSelectedOff }) {
 
     const formData = new FormData(e.target);
     const formJson = Object.fromEntries(formData.entries());
-    console.log(formJson)
+    console.log(formJson);
     const response = await fetch("/api/v1/user", {
       method: "POST",
       body: JSON.stringify(formJson),
@@ -58,10 +61,10 @@ function FormUserName({ isAuthed, setData, quoteSelectedOff }) {
       credentials: "include",
     });
     if (response.ok) {
-      const jsonData = await fetchAndAuth(isAuthed);
-      setData(jsonData);
+      const content = await fetchAndAuth(isAuthed);
+      setData(content);
     } else {
-      console.error('/user post error')
+      console.error("/user post error");
     }
   };
 
@@ -83,7 +86,7 @@ function FormUserName({ isAuthed, setData, quoteSelectedOff }) {
   );
 }
 
-function UserName(username) {
+function UserName({ username }) {
   return (
     <tr>
       <th>{username}</th>
@@ -98,10 +101,12 @@ async function fetchAndAuth(isAuthed) {
       method: "GET",
       credentials: "include",
     });
+
     if (response.ok) {
       return (await response.json()).content;
     } else {
       console.error("/user error");
     }
   }
+  return 0;
 }
