@@ -28,7 +28,7 @@ export function QuoteDisplay({
     /* Upon send connection, adds listener to keydown, which increase input state and adds to send queue.*/
     const handleKeyDown = (event) => {
       const charRegex = /[a-z0-9]/i;
-      const specialKeys = [" ", ".", ",", "?"];
+      const specialKeys = [" ", ".", ",", "?", "'", "!"];
 
       if (event.key === "Backspace") {
         if (inputLength.current === 0) {

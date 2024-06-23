@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 
-//const httpUrl = import.meta.env.VITE_HTTP_SERVER_URL;
-
-export function LeaderBoard({ gameState, quoteSelected }) {
+export function LeaderBoard({ gameState }) {
   const [data, setData] = useState([]);
 
   async function fetchData() {
