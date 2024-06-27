@@ -13,6 +13,17 @@ export function UserDisplay({ isAuthed, quoteSelectedOff }) {
     });
   }, [isAuthed]);
 
+  const camelCaseToTitleCase = (camelCase) => {
+    let displayText;
+    if (camelCase === "avgWPM") {
+      displayText = "avg. WPM";
+    }
+    if (camelCase === "totalCrowns") {
+      displayText = "Total Crowns";
+    }
+    return displayText;
+  };
+
   return (
     <div className="userdisplay-container">
       <table>
@@ -35,7 +46,7 @@ export function UserDisplay({ isAuthed, quoteSelectedOff }) {
         <tbody>
           {Object.entries(userData.current || {}).map(([key, value]) => (
             <tr key={key}>
-              <td>{key}</td>
+              <td>{camelCaseToTitleCase(key)}</td>
               <td>{value}</td>
             </tr>
           ))}
@@ -77,7 +88,7 @@ function FormUserName({ isAuthed, setData, quoteSelectedOff }) {
       <td>
         <form onSubmit={submitHandle} onFocus={focusHandle}>
           <label>
-            Enter name to be displayed here: <input name="name" />
+            <input name="name" placeholder="Name?" />
           </label>
           <button type="submit">send</button>
         </form>
