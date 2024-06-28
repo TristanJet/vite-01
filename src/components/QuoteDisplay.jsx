@@ -71,7 +71,6 @@ export function QuoteDisplay({
 
     const sendInputs = () => {
       if (sendQueueRef.current.length > 0) {
-        //console.log(sendQueueRef.current);
         send(JSON.stringify({ commands: sendQueueRef.current }));
         sendQueueRef.current = []; // Clear the queue
       }
@@ -99,7 +98,6 @@ export function QuoteDisplay({
   useEffect(() => {
     if (cursorRef.current) {
       const typedChars = document.querySelectorAll(".typed");
-      console.log(typedChars);
       if (typedChars.length > 0) {
         const lastTypedChar = typedChars[typedChars.length - 1];
         cursorRef.current.style.left = `${lastTypedChar.offsetLeft + lastTypedChar.offsetWidth}px`;

@@ -15,10 +15,60 @@ export function App() {
   const [ws, setWs] = useState(null);
   const [gameState, setGameState] = useState(false);
   const [lastTime, setLastTime] = useState(0);
-  const [isAuthed, setIsAuthed] = useState(false);
+  const [auth, setAuth] = useState(null);
   const [quoteSelected, setQuoteSelected] = useState(false);
   const [isSigned, setSigned] = useState(true);
   const quoteRef = useRef("");
+
+  const setupWebSocketConnection = (authToken) => {
+    try {
+      const url = `/ws?jet-token=${authToken}`;
+      const ws = new WebSocket(url);
+      ws.onopen = () => {
+        console.log("connected");
+        if (!quoteSelected) {
+          setQuoteSelected(true);
+        }
+        console.log(ws);
+        setWs(ws);
+      };
+      ws.onmessage = (event) => {
+        if (event.data === "PING") {
+          console.log("pinged");
+          ws.send("PONG");
+        }
+        const parsed = JSON.parse(event.data);
+        if (parsed.type === "FIN") {
+          setGameState(false);
+          setLastTime(parsed.finishTime);
+          console.log(
+            `${parsed.name}: you typed the quote in ${parsed.finishTime} seconds, with a speed of ${parsed.wpm} wpm!`,
+          );
+        }
+      };
+      ws.onclose = () => {
+        setGameState(false);
+        setQuoteSelected(false);
+        setWs(null);
+        console.log("Websocket closed");
+      };
+      ws.onerror = () => {
+        console.log("Websocket error");
+      };
+    } catch (error) {
+      console.log("Server connection error", error);
+    }
+  };
+
+  useEffect(() => {
+    if (quoteSelected) {
+      if (!ws) {
+        if (auth) {
+          setupWebSocketConnection(auth);
+        }
+      }
+    }
+  }, [quoteSelected]);
 
   useEffect(() => {
     const fetchAuth = async () => {
@@ -50,42 +100,6 @@ export function App() {
       return 0;
     };
 
-    const setupWebSocketConnection = (authToken) => {
-      try {
-        const url = `/ws?jet-token=${authToken}`;
-        const ws = new WebSocket(url);
-        ws.onopen = () => {
-          console.log("connected");
-          setQuoteSelected(true);
-          setWs(ws);
-        };
-        ws.onmessage = (event) => {
-          if (event.data === "PING") {
-            console.log("pinged");
-            ws.send("PONG");
-          }
-          const parsed = JSON.parse(event.data);
-          if (parsed.type === "FIN") {
-            setGameState(false);
-            setLastTime(parsed.finishTime);
-            console.log(
-              `${parsed.name}: you typed the quote in ${parsed.finishTime} seconds, with a speed of ${parsed.wpm} wpm!`,
-            );
-          }
-        };
-        ws.onclose = () => {
-          setGameState(false);
-          setQuoteSelected(false);
-          console.log("Websocket closed");
-        };
-        ws.onerror = () => {
-          console.log("Websocket error");
-        };
-      } catch (error) {
-        console.log("Server connection error", error);
-      }
-    };
-
     const fetchQuote = async () => {
       const resp = await fetch("/api/v1/quote", {
         method: "GET",
@@ -100,7 +114,7 @@ export function App() {
 
     fetchAuth().then((authobj) => {
       if (authobj) {
-        setIsAuthed(true);
+        setAuth(authobj.token);
         if (!authobj.signed) {
           setSigned(false);
         }
@@ -125,7 +139,7 @@ export function App() {
         <div className="main-container">
           <div className="left-column">
             <UserDisplay
-              isAuthed={isAuthed}
+              isAuthed={auth ? true : false}
               quoteSelectedOff={() => {
                 setQuoteSelected(false);
               }}
@@ -138,7 +152,11 @@ export function App() {
               setQuoteSelected(true);
             }}
             send={(data) => {
-              ws.send(data);
+              if (ws) {
+                ws.send(data);
+              } else {
+                console.log("No websocket connection: " + ws);
+              }
             }}
             gameState={gameState}
             startGameState={() => {
