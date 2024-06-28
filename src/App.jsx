@@ -1,6 +1,5 @@
-import { useEffect, useState, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-
 import { Timer } from "./components/Timer.jsx";
 import { QuoteDisplay } from "./components/QuoteDisplay.jsx";
 import { GoogleLoginButton } from "./components/GoogleButton.jsx";
@@ -12,12 +11,12 @@ import "./App.css";
 const googleClient = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 export function App() {
-  const [ws, setWs] = useState(null);
   const [gameState, setGameState] = useState(false);
   const [lastTime, setLastTime] = useState(0);
   const [auth, setAuth] = useState(null);
   const [quoteSelected, setQuoteSelected] = useState(false);
   const [isSigned, setSigned] = useState(true);
+  const wsRef = useRef(null);
   const quoteRef = useRef("");
 
   const setupWebSocketConnection = (authToken) => {
@@ -30,7 +29,7 @@ export function App() {
           setQuoteSelected(true);
         }
         console.log(ws);
-        setWs(ws);
+        wsRef.current = ws;
       };
       ws.onmessage = (event) => {
         if (event.data === "PING") {
@@ -49,7 +48,7 @@ export function App() {
       ws.onclose = () => {
         setGameState(false);
         setQuoteSelected(false);
-        setWs(null);
+        wsRef.current = null;
         console.log("Websocket closed");
       };
       ws.onerror = () => {
@@ -61,14 +60,10 @@ export function App() {
   };
 
   useEffect(() => {
-    if (quoteSelected) {
-      if (!ws) {
-        if (auth) {
-          setupWebSocketConnection(auth);
-        }
-      }
+    if (quoteSelected && !wsRef.current && auth) {
+      setupWebSocketConnection(auth);
     }
-  }, [quoteSelected]);
+  }, [quoteSelected, auth]);
 
   useEffect(() => {
     const fetchAuth = async () => {
@@ -132,6 +127,14 @@ export function App() {
     });
   }, []);
 
+  const sendCallback = useCallback((data) => {
+    if (wsRef.current) {
+      wsRef.current.send(data);
+    } else {
+      console.log("No websocket connection: " + wsRef.current);
+    }
+  }, []);
+
   return (
     <>
       <GoogleOAuthProvider clientId={googleClient}>
@@ -151,13 +154,7 @@ export function App() {
             setQuoteSelectTrue={() => {
               setQuoteSelected(true);
             }}
-            send={(data) => {
-              if (ws) {
-                ws.send(data);
-              } else {
-                console.log("No websocket connection: " + ws);
-              }
-            }}
+            send={sendCallback}
             gameState={gameState}
             startGameState={() => {
               setGameState(true);
