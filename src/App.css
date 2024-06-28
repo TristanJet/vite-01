@@ -45,6 +45,7 @@
     font-size: 3.2rem;
     letter-spacing: 2px;
     opacity: 0.33;
+    filter: blur(3px);
 }
 
 .quote-display-unselected:hover {
@@ -128,13 +129,14 @@ thead {
 
 .untyped {
     color: white;
+    opacity: 0.33;
 }
 
 .correct {
-    color: rgb(0, 255, 0);
+    color: white;
+    opacity: 0.8;
 }
 
 .incorrect {
     color: rgb(255, 0, 0);
-    text-decoration: underline;
 }

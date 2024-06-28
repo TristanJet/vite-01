@@ -1,21 +1,27 @@
+@font-face {
+    font-family: "sf-pro";
+    src: "./assets/sf-pro-display_semibold.woff2";
+}
+
 :root {
-  /* Define CSS variables and root-level styles here */
-  --main-font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  --main-background-color: #242424;
-  --main-color: rgba(255, 255, 255, 0.87);
+    /* Define CSS variables and root-level styles here */
+    --main-font-family: sf-pro, Inter, system-ui, Avenir, Helvetica, Arial,
+        sans-serif;
+    --main-background-color: #242424;
+    --main-color: rgba(255, 255, 255, 0.87);
 }
 
 body {
-  display: flex;
-  flex-direction: column;
-  font-family: var(--main-font-family);
-  line-height: 1.5;
-  font-weight: 400;
-  color-scheme: light dark;
-  color: var(--main-color);
-  background-color: var(--main-background-color);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    display: flex;
+    flex-direction: column;
+    font-family: var(--main-font-family);
+    line-height: 1.5;
+    font-weight: 400;
+    color-scheme: light dark;
+    color: var(--main-color);
+    background-color: var(--main-background-color);
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
