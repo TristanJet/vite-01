@@ -13,6 +13,7 @@ export function QuoteDisplay({
   const inputLength = useRef(0);
   const sendQueueRef = useRef([]);
   const delNum = useRef(1);
+  const cursorRef = useRef(null);
 
   const quoteChars = quote.split("");
   const quoteWords = quote.split(" ");
@@ -25,10 +26,9 @@ export function QuoteDisplay({
   }, [gameState]);
 
   useEffect(() => {
-    /* Upon send connection, adds listener to keydown, which increase input state and adds to send queue.*/
     const handleKeyDown = (event) => {
       const charRegex = /[a-z0-9]/i;
-      const specialKeys = [" ", ".", ",", "?", "'", "!"];
+      const specialKeys = [" ", ".", ",", "?"];
 
       if (event.key === "Backspace") {
         if (inputLength.current === 0) {
@@ -36,7 +36,6 @@ export function QuoteDisplay({
         }
         setInputState((prevInputState) => prevInputState.slice(0, -1));
         inputLength.current -= 1;
-        /**The following logic is only for communicating DEL messages to server */
         if (delNum.current > 1) {
           try {
             sendQueueRef.current[sendQueueRef.current.length - 1].num =
@@ -53,7 +52,6 @@ export function QuoteDisplay({
         if (inputLength.current === 0) {
           clearGameState();
         }
-        /** */
       } else if (
         (event.key.length === 1 && charRegex.test(event.key)) ||
         specialKeys.includes(event.key)
@@ -79,7 +77,6 @@ export function QuoteDisplay({
       }
     };
 
-    // Set up interval to send inputs every 0.1 seconds
     let sendInterval;
     if (quoteSelected) {
       console.log("adding event listeners");
@@ -100,6 +97,20 @@ export function QuoteDisplay({
     };
   }, [quoteSelected]);
 
+  useEffect(() => {
+    if (cursorRef.current) {
+      const typedChars = document.querySelectorAll(".typed");
+      if (typedChars.length > 0) {
+        const lastTypedChar = typedChars[typedChars.length - 1];
+        cursorRef.current.style.left = `${lastTypedChar.offsetLeft + lastTypedChar.offsetWidth}px`;
+        cursorRef.current.style.top = `${lastTypedChar.offsetTop}px`;
+      } else {
+        cursorRef.current.style.left = "0px";
+        cursorRef.current.style.top = "0px";
+      }
+    }
+  }, [inputState]);
+
   const correctState = inputState.map((inputChar, index) => {
     if (inputChar === quoteChars[index]) {
       return "correct";
@@ -116,7 +127,6 @@ export function QuoteDisplay({
       id="quoteDisplay"
       onClick={quoteSelected ? null : setQuoteSelectTrue}
     >
-      {inputLength.current === 0 && <span className="typing-cursor"></span>}
       <div className="quote-container">
         {quoteWords.map((word, wordIndex) => (
           <span key={wordIndex} className="word">
@@ -130,28 +140,18 @@ export function QuoteDisplay({
                   key={charIndex}
                   className={
                     overallIndex < correctState.length
-                      ? correctState[overallIndex]
+                      ? `${correctState[overallIndex]} typed`
                       : "untyped"
                   }
                 >
                   {character}
-                  {overallIndex === inputLength.current - 1 && (
-                    <span className="typing-cursor"></span>
-                  )}
                 </span>
               );
             })}
-            {wordIndex < quoteWords.length - 1 && (
-              <span>
-                &nbsp;
-                {quoteWords.slice(0, wordIndex + 1).join(" ").length ===
-                  inputLength.current - 1 && (
-                  <span className="typing-cursor"></span>
-                )}
-              </span>
-            )}
+            {wordIndex < quoteWords.length - 1 && <span>&nbsp;</span>}
           </span>
         ))}
+        <span ref={cursorRef} className="typing-cursor"></span>
       </div>
     </div>
   );

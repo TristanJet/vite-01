@@ -102,23 +102,28 @@ thead {
     background-color: #000000;
 }
 
+.typing-cursor {
+    position: absolute;
+    display: inline-block;
+    width: 3px;
+    background-color: black;
+    animation: blink 1s infinite;
+    height: 1.5em; /* Match the line-height of your text */
+    transition:
+        left 0.2s ease,
+        top 0.2s ease; /* Smooth transition for cursor movement */
+}
+
 @keyframes blink {
-    from,
-    to {
+    0% {
         opacity: 1;
     }
     50% {
         opacity: 0;
     }
-}
-
-.typing-cursor {
-    position: absolute;
-    height: 1.5em; /* Match the line-height of your text */
-    width: 3px; /* Thin vertical line */
-    background-color: black; /* Cursor color */
-    display: inline-block; /* Align with inline text */
-    animation: blink 1s infinite;
+    100% {
+        opacity: 1;
+    }
 }
 
 .untyped,

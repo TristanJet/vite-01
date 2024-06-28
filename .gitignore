@@ -23,3 +23,5 @@ eslint.config.js
 *.njsproj
 *.sln
 *.sw?
+
+chatgpt.jsx
