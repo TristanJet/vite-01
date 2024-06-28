@@ -13,7 +13,7 @@ export function QuoteDisplay({
   const inputLength = useRef(0);
   const sendQueueRef = useRef([]);
   const delNum = useRef(1);
-  const cursorRef = useRef(null);
+  const cursorRef = useRef(0);
 
   const quoteChars = quote.split("");
   const quoteWords = quote.split(" ");
@@ -71,7 +71,7 @@ export function QuoteDisplay({
 
     const sendInputs = () => {
       if (sendQueueRef.current.length > 0) {
-        console.log(sendQueueRef.current);
+        //console.log(sendQueueRef.current);
         send(JSON.stringify({ commands: sendQueueRef.current }));
         sendQueueRef.current = []; // Clear the queue
       }
@@ -79,7 +79,6 @@ export function QuoteDisplay({
 
     let sendInterval;
     if (quoteSelected) {
-      console.log("adding event listeners");
       window.addEventListener("keydown", handleKeyDown);
       sendInterval = setInterval(sendInputs, 100);
     } else {
@@ -100,16 +99,24 @@ export function QuoteDisplay({
   useEffect(() => {
     if (cursorRef.current) {
       const typedChars = document.querySelectorAll(".typed");
+      console.log(typedChars);
       if (typedChars.length > 0) {
         const lastTypedChar = typedChars[typedChars.length - 1];
         cursorRef.current.style.left = `${lastTypedChar.offsetLeft + lastTypedChar.offsetWidth}px`;
         cursorRef.current.style.top = `${lastTypedChar.offsetTop}px`;
       } else {
-        cursorRef.current.style.left = "0px";
-        cursorRef.current.style.top = "0px";
+        // Set initial position at the beginning of the first word
+        const firstWord = document.querySelector(".word");
+        if (firstWord) {
+          const firstChar = firstWord.firstChild;
+          if (firstChar) {
+            cursorRef.current.style.left = `${firstChar.offsetLeft}px`;
+            cursorRef.current.style.top = `${firstChar.offsetTop}px`;
+          }
+        }
       }
     }
-  }, [inputState]);
+  }, [quote, inputState]);
 
   const correctState = inputState.map((inputChar, index) => {
     if (inputChar === quoteChars[index]) {
@@ -132,9 +139,9 @@ export function QuoteDisplay({
           <span key={wordIndex} className="word">
             {word.split("").map((character, charIndex) => {
               const overallIndex =
-                quoteWords.slice(0, wordIndex).join(" ").length +
-                charIndex +
-                (wordIndex > 0 ? 1 : 0);
+                quoteWords
+                  .slice(0, wordIndex)
+                  .reduce((acc, w) => acc + w.length + 1, 0) + charIndex;
               return (
                 <span
                   key={charIndex}
@@ -148,10 +155,28 @@ export function QuoteDisplay({
                 </span>
               );
             })}
-            {wordIndex < quoteWords.length - 1 && <span>&nbsp;</span>}
+            {wordIndex < quoteWords.length - 1 && (
+              <span
+                className={
+                  quoteWords
+                    .slice(0, wordIndex + 1)
+                    .reduce((acc, w) => acc + w.length + 1, -1) <
+                  correctState.length
+                    ? "typed"
+                    : ""
+                }
+              >
+                &nbsp;
+              </span>
+            )}
           </span>
         ))}
-        <span ref={cursorRef} className="typing-cursor"></span>
+        <span
+          ref={cursorRef}
+          className={
+            inputLength.current === 0 ? "typing-cursor-blink" : "typing-cursor"
+          }
+        ></span>
       </div>
     </div>
   );

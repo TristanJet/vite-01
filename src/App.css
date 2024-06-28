@@ -102,16 +102,20 @@ thead {
     background-color: #000000;
 }
 
-.typing-cursor {
+.typing-cursor,
+.typing-cursor-blink {
     position: absolute;
     display: inline-block;
     width: 3px;
     background-color: black;
-    animation: blink 1s infinite;
     height: 1.5em; /* Match the line-height of your text */
     transition:
         left 0.2s ease,
         top 0.2s ease; /* Smooth transition for cursor movement */
+}
+
+.typing-cursor-blink {
+    animation: blink 1s infinite;
 }
 
 @keyframes blink {
