@@ -178,6 +178,7 @@ export function QuoteDisplay({
           }
         ></span>
       </div>
+      <span className="reconnect-text">Click to reconnect</span>
     </div>
   );
 }
